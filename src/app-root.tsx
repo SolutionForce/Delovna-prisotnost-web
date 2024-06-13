@@ -14,6 +14,7 @@ import { firestore } from "./firebase";
 import Dashboard from "./pages/dashboard/dashboard";
 import FormUser from "./components/FormUser";
 import User from "./pages/user/User";
+import Calendar from "./pages/dashboard/calendar/Calendar";
 
 interface IAttendanceBreak {
   description: string;
@@ -313,6 +314,7 @@ export default function AppRoot() {
         <div className="px-4 sm:px-6 lg:px-8">
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/calendar" element={<Calendar />} />
             <Route path="/user/:id" element={<User />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>

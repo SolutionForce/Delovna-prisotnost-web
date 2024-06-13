@@ -82,16 +82,16 @@ const ChartTwo: React.FC = () => {
       },
     ],
   });
-  
+
   const handleReset = () => {
     setState((prevState) => ({
       ...prevState,
     }));
   };
-  handleReset;  
+  handleReset;
 
   return (
-    <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+    <div className="relative z-0 col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-xl font-semibold text-black dark:text-white">
@@ -99,11 +99,11 @@ const ChartTwo: React.FC = () => {
           </h4>
         </div>
         <div>
-          <div className="relative z-20 inline-block">
+          <div className="relative z-10 inline-block">
             <select
               name="#"
               id="#"
-              className="relative z-20 inline-flex appearance-none bg-transparent py-1 pl-3 pr-8 text-sm font-medium outline-none"
+              className="relative z-10 inline-flex appearance-none bg-transparent py-1 pl-3 pr-8 text-sm font-medium outline-none"
             >
               <option value="" className='dark:bg-boxdark'>This Week</option>
               <option value="" className='dark:bg-boxdark'>Last Week</option>
@@ -133,7 +133,7 @@ const ChartTwo: React.FC = () => {
       </div>
 
       <div>
-        <div id="chartTwo" className="-ml-5 -mb-9">
+        <div id="chartTwo" className="relative z-0">
           <ReactApexChart
             options={options}
             series={state.series}
