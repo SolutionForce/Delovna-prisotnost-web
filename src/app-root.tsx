@@ -5,7 +5,9 @@ import {
   HomeIcon,
   PlusIcon,
   XMarkIcon,
+  ClockIcon,
 } from "@heroicons/react/24/outline";
+
 import { classNames } from "./utils";
 import { Navigate, Route, Routes, useNavigate, Link } from "react-router-dom";
 import { collection, onSnapshot, query, doc, getDoc } from "firebase/firestore";
@@ -15,6 +17,7 @@ import Dashboard from "./pages/dashboard/dashboard";
 import FormUser from "./components/FormUser";
 import User from "./pages/user/User";
 import Calendar from "./pages/dashboard/calendar/Calendar";
+import { AttendanceVerification } from "./pages/qr/AttendanceVerification";
 
 interface IAttendanceBreak {
   description: string;
@@ -37,6 +40,7 @@ interface IUser {
 
 const navigation = [
   { name: "Dashboard", to: "/dashboard", icon: HomeIcon, current: true },
+  { name: "Attendance", to: "/attendance", icon: ClockIcon, current: true },
 ];
 
 export default function AppRoot() {
@@ -316,6 +320,8 @@ export default function AppRoot() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/user/:id" element={<User />} />
+            <Route path="/attendance" element={<AttendanceVerification />} />
+
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         </div>
