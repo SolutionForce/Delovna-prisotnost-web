@@ -23,12 +23,12 @@ const fetchData = async (): Promise<Shift[]> => {
       year: 2024,
       MorningShift: [
         { name: "Bob", work: "8-16" },
-        { name: "Ana", work: "9-17" }
+        { name: "Ana", work: "9-17" },
       ],
       AfternoonShift: [
         { name: "Jake", work: "12-20" },
-        { name: "Lily", work: "14-22" }
-      ]
+        { name: "Lily", work: "14-22" },
+      ],
     },
     {
       day: 14,
@@ -36,12 +36,12 @@ const fetchData = async (): Promise<Shift[]> => {
       year: 2024,
       MorningShift: [
         { name: "John", work: "8-16" },
-        { name: "Eva", work: "9-17" }
+        { name: "Eva", work: "9-17" },
       ],
       AfternoonShift: [
         { name: "Mark", work: "12-20" },
-        { name: "Sara", work: "14-22" }
-      ]
+        { name: "Sara", work: "14-22" },
+      ],
     },
     // Add more dates as required
   ];
@@ -68,8 +68,12 @@ const generateCalendar = (month: number, year: number): number[] => {
 const Calendar = () => {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [calendar, setCalendar] = useState<number[]>([]);
-  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth() + 1);
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    new Date().getMonth() + 1
+  );
+  const [currentYear, setCurrentYear] = useState<number>(
+    new Date().getFullYear()
+  );
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const today = new Date();
 
@@ -88,24 +92,29 @@ const Calendar = () => {
   }
 
   const getShiftsForDay = (day: number) => {
-    return shifts.filter(shift => shift.day === day && shift.month === currentMonth && shift.year === currentYear);
+    return shifts.filter(
+      (shift) =>
+        shift.day === day &&
+        shift.month === currentMonth &&
+        shift.year === currentYear
+    );
   };
 
   const handleNextMonth = () => {
     if (currentMonth === 12) {
       setCurrentMonth(1);
-      setCurrentYear(prevYear => prevYear + 1);
+      setCurrentYear((prevYear) => prevYear + 1);
     } else {
-      setCurrentMonth(prevMonth => prevMonth + 1);
+      setCurrentMonth((prevMonth) => prevMonth + 1);
     }
   };
 
   const handlePreviousMonth = () => {
     if (currentMonth === 1) {
       setCurrentMonth(12);
-      setCurrentYear(prevYear => prevYear - 1);
+      setCurrentYear((prevYear) => prevYear - 1);
     } else {
-      setCurrentMonth(prevMonth => prevMonth - 1);
+      setCurrentMonth((prevMonth) => prevMonth - 1);
     }
   };
 
@@ -114,7 +123,10 @@ const Calendar = () => {
       <div className="flex justify-between items-center p-4 bg-purple-600 text-white">
         <button onClick={handlePreviousMonth}>Previous</button>
         <h2 className="text-lg font-bold">
-          {new Date(currentYear, currentMonth - 1).toLocaleString("default", { month: "long" })} {currentYear}
+          {new Date(currentYear, currentMonth - 1).toLocaleString("default", {
+            month: "long",
+          })}{" "}
+          {currentYear}
         </h2>
         <button onClick={handleNextMonth}>Next</button>
       </div>
@@ -155,8 +167,13 @@ const Calendar = () => {
           {selectedDay !== null && (
             <div className="w-full p-4 bg-white shadow-md z-50 mt-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Shifts for {selectedDay}.{currentMonth}.{currentYear}</h2>
-                <button onClick={() => setSelectedDay(null)} className="text-black">
+                <h2 className="text-xl font-bold">
+                  Shifts for {selectedDay}.{currentMonth}.{currentYear}
+                </h2>
+                <button
+                  onClick={() => setSelectedDay(null)}
+                  className="text-black"
+                >
                   Close
                 </button>
               </div>
@@ -167,7 +184,9 @@ const Calendar = () => {
                     <div key={i} className="mb-4">
                       {shift.MorningShift.map((worker, j) => (
                         <div key={j} className="ml-4">
-                          <span className="font-medium text-black">{worker.name}</span>
+                          <span className="font-medium text-black">
+                            {worker.name}
+                          </span>
                           <span className="text-black"> ({worker.work})</span>
                         </div>
                       ))}
@@ -180,7 +199,9 @@ const Calendar = () => {
                     <div key={i} className="mb-4">
                       {shift.AfternoonShift.map((worker, j) => (
                         <div key={j} className="ml-4">
-                          <span className="font-medium text-black">{worker.name}</span>
+                          <span className="font-medium text-black">
+                            {worker.name}
+                          </span>
                           <span className="text-black"> ({worker.work})</span>
                         </div>
                       ))}
