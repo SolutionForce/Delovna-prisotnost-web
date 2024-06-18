@@ -16,37 +16,27 @@ type Shift = {
 
 // Simulate fetching data
 const fetchData = async (): Promise<Shift[]> => {
-  const data: Shift[] = [
-    {
-      day: 13,
-      month: 6,
-      year: 2024,
-      MorningShift: [
-        { name: "Bob", work: "8-16" },
-        { name: "Ana", work: "9-17" },
-      ],
-      AfternoonShift: [
-        { name: "Jake", work: "12-20" },
-        { name: "Lily", work: "14-22" },
-      ],
-    },
-    {
-      day: 14,
-      month: 6,
-      year: 2024,
-      MorningShift: [
-        { name: "John", work: "8-16" },
-        { name: "Eva", work: "9-17" },
-      ],
-      AfternoonShift: [
-        { name: "Mark", work: "12-20" },
-        { name: "Sara", work: "14-22" },
-      ],
-    },
-    // Add more dates as required
-  ];
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:5001/rvir-1e34e/us-central1/api/timetables"
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const responseData = await response.json();
 
-  return data;
+    // Extract and parse the 'attendance' field
+    const attendanceData: Shift[] = responseData
+      .map((item: any) => {
+        return JSON.parse(item.attendance);
+      })
+      .flat();
+
+    return attendanceData;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+    return [];
+  }
 };
 
 const daysInMonth = (month: number, year: number): number => {
