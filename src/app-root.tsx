@@ -17,7 +17,7 @@ import Dashboard from "./pages/dashboard/dashboard";
 import FormUser from "./components/FormUser";
 import User from "./pages/user/User";
 import Calendar from "./pages/dashboard/calendar/Calendar";
-import { AttendanceVerification } from "./pages/qr/AttendanceVerification";
+import AttendanceSubmission from "./components/attendanceSubmission/attendanceSubmission";
 
 interface IAttendanceBreak {
   description: string;
@@ -40,7 +40,7 @@ interface IUser {
 
 const navigation = [
   { name: "Dashboard", to: "/dashboard", icon: HomeIcon, current: true },
-  { name: "Attendance", to: "/attendance", icon: ClockIcon, current: true },
+  { name: "Attendance", to: "/attendance", icon: ClockIcon, current: false },
 ];
 
 export default function AppRoot() {
@@ -320,7 +320,7 @@ export default function AppRoot() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/user/:id" element={<User />} />
-            <Route path="/attendance" element={<AttendanceVerification />} />
+            <Route path="/attendance" element={<AttendanceSubmission />} />
 
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>

@@ -1,0 +1,1 @@
+export const BACKEND_BASE_URL = "https://us-central1-rvir-1e34e.cloudfunctions.net/api/";
