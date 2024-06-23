@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-
-import { firestore } from "../../firebase.ts";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, PencilIcon } from "@heroicons/react/24/outline";
 import UserFormDialog from "./UserFormDialog";
 import { fetchData } from "../../modules/constants/fetchData.ts";
-import { User, Attendance } from "../../modules/interfaces/user.ts";
+import { User, Attendance, Role } from "../../modules/interfaces/user.ts";
+import { firestore } from "../../firebase.ts";
+
+const fetchOrganizations = async () => {
+  return ["bJHcvlNbZalnmNWPzXei"];
+};
 
 export default function UserF({ reload }: any) {
   const { id } = useParams<{ id: string }>();
@@ -17,10 +19,12 @@ export default function UserF({ reload }: any) {
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentAttendance, setCurrentAttendance] = useState<Attendance | null>(
     null
   );
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [organizationIds, setOrganizationIds] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,6 +43,15 @@ export default function UserF({ reload }: any) {
 
     fetchUser();
   }, [id]);
+
+  useEffect(() => {
+    const fetchOrgIds = async () => {
+      const orgIds = await fetchOrganizations();
+      setOrganizationIds(orgIds);
+    };
+
+    fetchOrgIds();
+  }, []);
 
   const handleAddAttendance = () => {
     setCurrentAttendance(null);
@@ -89,6 +102,18 @@ export default function UserF({ reload }: any) {
     console.log("REMOVING ATTENDANCE", id, index);
   };
 
+  const handleSaveUser = async (updatedUser: User) => {
+    try {
+      await setDoc(doc(firestore, "users", updatedUser.uid), updatedUser, {
+        merge: true,
+      });
+      setUser(updatedUser);
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      console.error("Error updating user: ", error);
+    }
+  };
+
   if (error) {
     return <div className="text-red-500">{error}</div>;
   }
@@ -119,7 +144,16 @@ export default function UserF({ reload }: any) {
         >
           Delete User
         </button>
+        <button
+          type="button"
+          className="inline-flex items-center rounded-md bg-yellow-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-600"
+          onClick={() => setIsEditDialogOpen(true)}
+        >
+          <PencilIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+          Edit User
+        </button>
       </div>
+
       {user.attendance.length > 0 ? (
         user.attendance.map((record, index) => (
           <div
@@ -192,6 +226,72 @@ export default function UserF({ reload }: any) {
       ) : (
         <p>No attendance records found.</p>
       )}
+
+      <div className="bg-white shadow sm:rounded-lg mb-8">
+        <div className="px-4 py-5 sm:px-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            More about user
+          </h3>
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            Personal details and information.
+          </p>
+        </div>
+        <div className="border-t border-gray-200">
+          <dl>
+            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">UID</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {user.uid}
+              </dd>
+            </div>
+            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Name</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {user.name}
+              </dd>
+            </div>
+            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Surname</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {user.surname}
+              </dd>
+            </div>
+            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Email</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {user.email}
+              </dd>
+            </div>
+            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Created At</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {new Date(user.createdAt.seconds * 1000).toLocaleString()}
+              </dd>
+            </div>
+            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">
+                Organization ID
+              </dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {user.organizationId}
+              </dd>
+            </div>
+            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Role</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {user.role}
+              </dd>
+            </div>
+            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Hourly Rate</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {user.hourlyRate}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
       <UserFormDialog
         isOpen={isDialogOpen}
         setIsOpen={setIsDialogOpen}
@@ -245,8 +345,11 @@ export default function UserF({ reload }: any) {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete user {user.name}{" "}
-                          {user.surname}? This action cannot be undone.
+                          Are you sure you want to delete user{" "}
+                          <b>
+                            {user.name} {user.surname}
+                          </b>
+                          ? This action cannot be undone.
                         </p>
                       </div>
                     </div>
@@ -269,6 +372,205 @@ export default function UserF({ reload }: any) {
                     >
                       Cancel
                     </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      <Transition.Root show={isEditDialogOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={setIsEditDialogOpen}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                  <div>
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100">
+                      <PencilIcon
+                        className="h-6 w-6 text-yellow-600"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div className="mt-3 text-center sm:mt-5">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Edit User
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            const target = e.target as typeof e.target & {
+                              name: { value: string };
+                              surname: { value: string };
+                              email: { value: string };
+                              organizationId: { value: string };
+                              role: { value: string };
+                              hourlyRate: { value: string };
+                            };
+                            handleSaveUser({
+                              ...user,
+                              name: target.name.value,
+                              surname: target.surname.value,
+                              email: target.email.value,
+                              organizationId: target.organizationId.value,
+                              role: target.role.value as Role,
+                              hourlyRate: parseFloat(target.hourlyRate.value),
+                            });
+                          }}
+                          className="space-y-4"
+                        >
+                          <div>
+                            <label
+                              htmlFor="name"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Name
+                            </label>
+                            <input
+                              type="text"
+                              name="name"
+                              id="name"
+                              defaultValue={user.name}
+                              required
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="surname"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Surname
+                            </label>
+                            <input
+                              type="text"
+                              name="surname"
+                              id="surname"
+                              defaultValue={user.surname}
+                              required
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="email"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Email
+                            </label>
+                            <input
+                              type="email"
+                              name="email"
+                              id="email"
+                              defaultValue={user.email}
+                              required
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="organizationId"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Organization ID
+                            </label>
+                            <select
+                              name="organizationId"
+                              id="organizationId"
+                              defaultValue={user.organizationId}
+                              required
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            >
+                              {organizationIds.map((orgId) => (
+                                <option key={orgId} value={orgId}>
+                                  {orgId}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="role"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Role
+                            </label>
+                            <select
+                              name="role"
+                              id="role"
+                              defaultValue={user.role}
+                              required
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            >
+                              <option value={Role.employee}>Employee</option>
+                              <option value={Role.admin}>Admin</option>
+                              <option value={Role.guest}>Guest</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="hourlyRate"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Hourly Rate
+                            </label>
+                            <input
+                              type="number"
+                              name="hourlyRate"
+                              id="hourlyRate"
+                              step="0.1"
+                              defaultValue={user.hourlyRate}
+                              required
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            />
+                          </div>
+                          <div className="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
+                            <button
+                              type="submit"
+                              className="inline-flex w-full justify-center rounded-md border border-transparent bg-yellow-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm"
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                              onClick={() => setIsEditDialogOpen(false)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

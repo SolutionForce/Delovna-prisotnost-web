@@ -28,9 +28,12 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
     []
   );
 
+  // Select all employees by default
   useEffect(() => {
-    onSelectionChange(selectedItems);
-  }, [selectedItems, onSelectionChange]);
+    const employees = items.filter((item) => item.role === Role.employee);
+    setSelectedItems(employees);
+    onSelectionChange(employees);
+  }, [items, onSelectionChange]);
 
   const handleSelectionChange = (
     selected: UserWithCalculations | UserWithCalculations[]
@@ -52,22 +55,23 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
       }
     }
     setSelectedItems(newSelectedItems);
+    onSelectionChange(newSelectedItems);
   };
 
   const selectAllUsers = () => {
     setSelectedItems(items);
-    console.log("Selected all users:", items);
+    onSelectionChange(items);
   };
 
   const selectAllEmployees = () => {
     const employees = items.filter((item) => item.role === Role.employee);
     setSelectedItems(employees);
-    console.log("Selected all employees:", employees);
+    onSelectionChange(employees);
   };
 
   const deselectAllUsers = () => {
     setSelectedItems([]);
-    console.log("Deselected all users");
+    onSelectionChange([]);
   };
 
   const getRoleColor = (role: Role, isSelected: boolean) => {
