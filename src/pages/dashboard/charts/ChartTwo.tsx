@@ -12,6 +12,7 @@ import {
   ChartOptions,
   TooltipItem,
 } from "chart.js";
+import { UserWithCalculations } from "../../../modules/interfaces/customUser";
 
 ChartJS.register(
   CategoryScale,
@@ -23,7 +24,7 @@ ChartJS.register(
 );
 
 interface ChartTwoProps {
-  selectedUsers: User[];
+  selectedUsers: UserWithCalculations[];
 }
 
 const ChartTwo: React.FC<ChartTwoProps> = ({ selectedUsers }) => {

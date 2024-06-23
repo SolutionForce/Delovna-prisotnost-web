@@ -6,12 +6,13 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { User } from "../../../modules/interfaces/user";
+import { UserWithCalculations } from "../../../modules/interfaces/customUser";
+import { Role } from "../../../modules/interfaces/user";
 
 type SelectMenuProps = {
-  items: User[];
+  items: UserWithCalculations[];
   multiSelect?: boolean;
-  onSelectionChange: (selected: User[]) => void;
+  onSelectionChange: (selected: UserWithCalculations[]) => void;
 };
 
 function classNames(...classes: string[]) {
@@ -23,14 +24,18 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
   multiSelect = false,
   onSelectionChange,
 }) => {
-  const [selectedItems, setSelectedItems] = useState<User[]>([]);
+  const [selectedItems, setSelectedItems] = useState<UserWithCalculations[]>(
+    []
+  );
 
   useEffect(() => {
     onSelectionChange(selectedItems);
   }, [selectedItems, onSelectionChange]);
 
-  const handleSelectionChange = (selected: User | User[]) => {
-    let newSelectedItems: User[];
+  const handleSelectionChange = (
+    selected: UserWithCalculations | UserWithCalculations[]
+  ) => {
+    let newSelectedItems: UserWithCalculations[];
     if (Array.isArray(selected)) {
       newSelectedItems = selected;
     } else {
@@ -54,9 +59,31 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
     console.log("Selected all users:", items);
   };
 
+  const selectAllEmployees = () => {
+    const employees = items.filter((item) => item.role === Role.employee);
+    setSelectedItems(employees);
+    console.log("Selected all employees:", employees);
+  };
+
   const deselectAllUsers = () => {
     setSelectedItems([]);
     console.log("Deselected all users");
+  };
+
+  const getRoleColor = (role: Role, isSelected: boolean) => {
+    if (role === Role.employee && isSelected) {
+      return "text-white";
+    }
+    switch (role) {
+      case Role.employee:
+        return "text-green-500";
+      case Role.admin:
+        return "text-red-500";
+      case Role.guest:
+        return "text-blue-500";
+      default:
+        return "text-gray-500";
+    }
   };
 
   return (
@@ -91,7 +118,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                       className={({ active, selected }) =>
                         classNames(
                           selected
-                            ? "bg-purple-600 text-white"
+                            ? "bg-purple-400 text-white"
                             : "text-gray-900",
                           "relative cursor-default select-none py-2 pl-3 pr-9"
                         )
@@ -106,7 +133,12 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                               "block truncate"
                             )}
                           >
-                            {person.name}
+                            {person.name}{" "}
+                            <span
+                              className={getRoleColor(person.role, selected)}
+                            >
+                              ({person.role})
+                            </span>
                           </span>
                           {selected && (
                             <span
@@ -133,16 +165,22 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
       </div>
       <div className="flex space-x-2">
         <button
+          onClick={selectAllEmployees}
+          className="px-4 py-2 bg-green-500 text-white rounded-md"
+        >
+          All Employees
+        </button>
+        <button
           onClick={selectAllUsers}
           className="px-4 py-2 bg-blue-500 text-white rounded-md"
         >
-          All users
+          All Users
         </button>
         <button
           onClick={deselectAllUsers}
           className="px-4 py-2 bg-red-500 text-white rounded-md"
         >
-          Clear users
+          Clear Users
         </button>
       </div>
     </div>

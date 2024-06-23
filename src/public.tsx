@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import React, { useState } from "react";
 import { auth } from "./firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import AttendanceQR from "./components/attendanceSubmission/attendanceQR/attendanceQR";
 
 export default function Public() {
   return (
@@ -122,7 +123,7 @@ function SignIn() {
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
+          {/* <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
             <a
               href="#"
@@ -130,7 +131,10 @@ function SignIn() {
             >
               Start a 14 day free trial
             </a>
-          </p>
+          </p> */}
+          <div className="m-10">
+            <AttendanceQR />
+          </div>
         </div>
       </div>
     </>

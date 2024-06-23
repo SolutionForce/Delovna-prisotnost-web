@@ -5,13 +5,16 @@ import ChartOne from "./charts/ChartOne";
 import ChartThree from "./charts/ChartThree";
 import ChartTwo from "./charts/ChartTwo";
 import TableOne from "./tables/TableOne";
-import { User } from "../../modules/interfaces/user";
+
 import { fetchData } from "../../modules/constants/fetchData";
 import Calendar from "./calendar/Calendar";
+import { UserWithCalculations } from "../../modules/interfaces/customUser";
 
 const Dashboard: React.FC = () => {
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserWithCalculations[]>(
+    []
+  );
+  const [users, setUsers] = useState<UserWithCalculations[]>([]);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -32,22 +35,6 @@ const Dashboard: React.FC = () => {
   const totalBreakTime = selectedUsers
     .reduce((acc, user) => acc + (user.calc?.totalBreakTime || 0), 0)
     .toFixed(2);
-  const averageDailyWorkHoursRaw =
-    selectedUsers.reduce(
-      (acc, user) => acc + (user.calc?.averageDailyWorkHours || 0),
-      0
-    ) / selectedUsers.length;
-  const averageDailyWorkHours = isNaN(averageDailyWorkHoursRaw)
-    ? "Missing values"
-    : averageDailyWorkHoursRaw.toFixed(2);
-  const averageBreakTimeRaw =
-    selectedUsers.reduce(
-      (acc, user) => acc + (user.calc?.averageBreakTime || 0),
-      0
-    ) / selectedUsers.length;
-  const averageBreakTime = isNaN(averageBreakTimeRaw)
-    ? "Missing values"
-    : averageBreakTimeRaw.toFixed(2);
 
   const totalMoneySpent = selectedUsers
     .reduce(

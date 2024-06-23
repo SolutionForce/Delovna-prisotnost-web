@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -7,37 +7,16 @@ import {
   XMarkIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-
 import { classNames } from "./utils";
 import { Navigate, Route, Routes, useNavigate, Link } from "react-router-dom";
-import { collection, onSnapshot, query, doc, getDoc } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { firestore } from "./firebase";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import Dashboard from "./pages/dashboard/dashboard";
 import FormUser from "./components/FormUser";
-import User from "./pages/user/User";
 import Calendar from "./pages/dashboard/calendar/Calendar";
 import AttendanceSubmission from "./components/attendanceSubmission/attendanceSubmission";
-
-interface IAttendanceBreak {
-  description: string;
-  start: any;
-  end: any;
-}
-
-interface IAttendance {
-  breaks: IAttendanceBreak[];
-  timeIn: any;
-  timeOut: any;
-}
-
-interface IUser {
-  id: string;
-  uid: string;
-  name: string;
-  surname: string;
-  attendance: IAttendance[];
-}
+import { User, Role } from "./modules/interfaces/user";
+import UserF from "./pages/user/User";
+import { fetchData } from "./modules/constants/fetchData";
 
 const navigation = [
   { name: "Dashboard", to: "/dashboard", icon: HomeIcon, current: true },
@@ -45,31 +24,50 @@ const navigation = [
 ];
 
 export default function AppRoot() {
+  const auth = getAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSlideOverOpen, setIsSlideOverOpen] = useState(false);
-  const [users, setUsers] = useState<IUser[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showEmployees, setShowEmployees] = useState(true);
+  const [showAdmins, setShowAdmins] = useState(false);
+  const [showGuests, setShowGuests] = useState(false);
   const navigate = useNavigate();
 
   const handleSlideOver = () => {
     setIsSlideOverOpen((prev) => !prev);
   };
 
+  const handleReload = async () => {
+    try {
+      const fetchedUsers = await fetchData(false); // Assuming includeCalc is false
+      setUsers(fetchedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        setIsAuthenticated(false);
+        navigate("/sign-in");
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
+  };
+
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setIsAuthenticated(true);
-        const q = query(collection(firestore, "users"));
-        const unsubscribeSnapshot = onSnapshot(q, (querySnapshot) => {
-          const usersList = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as IUser[];
-          setUsers(usersList);
-        });
-
-        return () => unsubscribeSnapshot();
+        try {
+          const fetchedUsers = await fetchData(false); // Assuming includeCalc is false
+          setUsers(fetchedUsers);
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
       } else {
         setIsAuthenticated(false);
       }
@@ -78,13 +76,17 @@ export default function AppRoot() {
     return () => unsubscribeAuth();
   }, []);
 
-  const handleUserClick = (user: IUser) => {
-    navigate(`/user/${user.uid}`);
-  };
-
   if (!isAuthenticated) {
     return <div>Please log in to see the users.</div>;
   }
+
+  const handleUserClick = (user: User) => {
+    navigate(`/user/${user.uid}`);
+  };
+
+  const filterUsersByRole = (role: Role) => {
+    return users.filter((user) => user.role === role);
+  };
 
   return (
     <>
@@ -176,26 +178,174 @@ export default function AppRoot() {
                         </ul>
                       </li>
                       <li>
-                        <ul role="list" className="-mx-2 space-y-1">
-                          {users.map((user) => (
-                            <li key={user.uid}>
-                              <button
-                                onClick={() => handleUserClick(user)}
-                                className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        <button
+                          onClick={() => setShowEmployees((prev) => !prev)}
+                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        >
+                          Employees
+                          <span>
+                            {showEmployees ? (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
                               >
-                                {user.name} {user.surname}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                                />
+                              </svg>
+                            )}
+                          </span>
+                        </button>
+                        {showEmployees && (
+                          <ul role="list" className="-mx-2 space-y-1">
+                            {filterUsersByRole(Role.employee).map((user) => (
+                              <li key={user.uid}>
+                                <button
+                                  onClick={() => handleUserClick(user)}
+                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                                >
+                                  {user.name} {user.surname}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => setShowAdmins((prev) => !prev)}
+                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        >
+                          Admins
+                          <span>
+                            {showAdmins ? (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                                />
+                              </svg>
+                            )}
+                          </span>
+                        </button>
+                        {showAdmins && (
+                          <ul role="list" className="-mx-2 space-y-1">
+                            {filterUsersByRole(Role.admin).map((user) => (
+                              <li key={user.uid}>
+                                <button
+                                  onClick={() => handleUserClick(user)}
+                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                                >
+                                  {user.name} {user.surname}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => setShowGuests((prev) => !prev)}
+                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        >
+                          Guests
+                          <span>
+                            {showGuests ? (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                                />
+                              </svg>
+                            )}
+                          </span>
+                        </button>
+                        {showGuests && (
+                          <ul role="list" className="-mx-2 space-y-1">
+                            {filterUsersByRole(Role.guest).map((user) => (
+                              <li key={user.uid}>
+                                <button
+                                  onClick={() => handleUserClick(user)}
+                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                                >
+                                  {user.name} {user.surname}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </li>
                       <li className="-mx-6">
                         <button
                           className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          onClick={() => {
-                            handleSlideOver();
-                            setSidebarOpen(false);
-                          }}
+                          onClick={() => handleSlideOver()}
                         >
                           <PlusIcon
                             className="h-5 w-5 mr-2 -ml-1"
@@ -203,6 +353,34 @@ export default function AppRoot() {
                           />
                           ADD USER
                         </button>
+                      </li>
+                      <li className="-mx-6 mt-auto">
+                        <div className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="h-6 w-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                            />
+                          </svg>
+                          <span className="sr-only">Your profile</span>
+                          <span aria-hidden="true">
+                            {getAuth().currentUser?.displayName || "User Name"}
+                          </span>
+                          <button
+                            onClick={handleSignOut}
+                            className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                          >
+                            Sign out
+                          </button>
+                        </div>
                       </li>
                     </ul>
                   </nav>
@@ -255,44 +433,206 @@ export default function AppRoot() {
                 </ul>
               </li>
               <li>
-                <ul role="list" className="-mx-2 space-y-1">
-                  {users.map((user) => (
-                    <li key={user.uid}>
-                      <button
-                        onClick={() => handleUserClick(user)}
-                        className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                <button
+                  onClick={() => setShowEmployees((prev) => !prev)}
+                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                >
+                  Employees
+                  <span>
+                    {showEmployees ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
                       >
-                        {user.name} {user.surname}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                        />
+                      </svg>
+                    )}
+                  </span>
+                </button>
+                {showEmployees && (
+                  <ul role="list" className="-mx-2 space-y-1">
+                    {filterUsersByRole(Role.employee).map((user) => (
+                      <li key={user.uid}>
+                        <button
+                          onClick={() => handleUserClick(user)}
+                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        >
+                          {user.name} {user.surname}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+              <li>
+                <button
+                  onClick={() => setShowAdmins((prev) => !prev)}
+                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                >
+                  Admins
+                  <span>
+                    {showAdmins ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                        />
+                      </svg>
+                    )}
+                  </span>
+                </button>
+                {showAdmins && (
+                  <ul role="list" className="-mx-2 space-y-1">
+                    {filterUsersByRole(Role.admin).map((user) => (
+                      <li key={user.uid}>
+                        <button
+                          onClick={() => handleUserClick(user)}
+                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        >
+                          {user.name} {user.surname}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+              <li>
+                <button
+                  onClick={() => setShowGuests((prev) => !prev)}
+                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                >
+                  Guests
+                  <span>
+                    {showGuests ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                        />
+                      </svg>
+                    )}
+                  </span>
+                </button>
+                {showGuests && (
+                  <ul role="list" className="-mx-2 space-y-1">
+                    {filterUsersByRole(Role.guest).map((user) => (
+                      <li key={user.uid}>
+                        <button
+                          onClick={() => handleUserClick(user)}
+                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        >
+                          {user.name} {user.surname}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
               <li className="-mx-6">
                 <button
                   className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={() => {
-                    handleSlideOver();
-                    setSidebarOpen(false);
-                  }}
+                  onClick={() => handleSlideOver()}
                 >
                   <PlusIcon className="h-5 w-5 mr-2 -ml-1" aria-hidden="true" />
                   ADD USER
                 </button>
               </li>
               <li className="-mx-6 mt-auto">
-                <a
-                  href="#"
-                  className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
-                >
-                  <img
-                    className="h-8 w-8 rounded-full bg-gray-50"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
+                <div className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                    />
+                  </svg>
                   <span className="sr-only">Your profile</span>
-                  <span aria-hidden="true">Tom Cook</span>
-                </a>
+                  <span aria-hidden="true">
+                    {getAuth().currentUser?.displayName || "User Name"}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  >
+                    Sign out
+                  </button>
+                </div>
               </li>
             </ul>
           </nav>
@@ -320,9 +660,8 @@ export default function AppRoot() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/user/:id" element={<User />} />
+            <Route path="/user/:id" element={<UserF reload={handleReload} />} />
             <Route path="/attendance" element={<AttendanceSubmission />} />
-
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         </div>
@@ -345,7 +684,10 @@ export default function AppRoot() {
                   leaveTo="translate-x-full"
                 >
                   <Dialog.Panel className="pointer-events-auto w-screen max-w-2xl">
-                    <FormUser setOpen={setIsSlideOverOpen} />
+                    <FormUser
+                      setOpen={setIsSlideOverOpen}
+                      reload={handleReload}
+                    />
                   </Dialog.Panel>
                 </Transition.Child>
               </div>

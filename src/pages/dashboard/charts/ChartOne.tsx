@@ -1,6 +1,5 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
-import { User } from "../../../modules/interfaces/user";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,6 +10,7 @@ import {
   Legend,
   ChartOptions,
 } from "chart.js";
+import { UserWithCalculations } from "../../../modules/interfaces/customUser";
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +22,7 @@ ChartJS.register(
 );
 
 interface ChartTotalEarningsProps {
-  selectedUsers: User[];
+  selectedUsers: UserWithCalculations[];
 }
 
 const ChartTotalEarnings: React.FC<ChartTotalEarningsProps> = ({

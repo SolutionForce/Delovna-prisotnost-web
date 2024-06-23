@@ -1,24 +1,27 @@
 import { useState } from "react";
-import { firestore } from "../firebase";
-import {
-  addDoc,
-  collection,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
 import { Dialog } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Role } from "../modules/interfaces/user";
+import { createEmployee } from "../modules/constants/fetchData";
+import { UserForRegistration } from "../modules/interfaces/customUser";
 
-const FormUser: React.FC<{ setOpen: (open: boolean) => void }> = ({
-  setOpen,
-}) => {
+const FormUser: React.FC<{
+  setOpen: (open: boolean) => void;
+  reload: () => void;
+}> = ({ setOpen, reload }) => {
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
     email: "",
     password: "",
-    role: "user", // Default role can be 'user' or 'admin'
+    organizationId: "",
+    role: Role.employee,
+    hourlyRate: "", // Add hourlyRate to the form state
   });
+
+  const [organizationIds, setOrganizationIds] = useState([
+    "bJHcvlNbZalnmNWPzXei",
+  ]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -32,26 +35,23 @@ const FormUser: React.FC<{ setOpen: (open: boolean) => void }> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
     try {
-      const userData = {
-        createdAt: serverTimestamp(),
+      const userData: UserForRegistration = {
         name: formData.name,
         surname: formData.surname,
         email: formData.email,
-        password: formData.password, // Ensure to handle password securely in production
         role: formData.role,
         attendance: [],
+        password: formData.password,
+        organizationId: formData.organizationId,
+        hourlyRate: parseFloat(formData.hourlyRate), // Parse hourlyRate as a float
       };
 
-      const docRef = await addDoc(collection(firestore, "users"), userData);
-      console.log("Document written with ID: ", docRef.id);
-
-      await setDoc(docRef, { createdBy: docRef.id }, { merge: true });
-
+      await createEmployee(userData);
+      reload();
       setOpen(false);
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error creating user:", error);
     }
   };
 
@@ -177,6 +177,36 @@ const FormUser: React.FC<{ setOpen: (open: boolean) => void }> = ({
           <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
             <div>
               <label
+                htmlFor="organizationId"
+                className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
+              >
+                Organization
+              </label>
+            </div>
+            <div className="sm:col-span-2">
+              <select
+                name="organizationId"
+                id="organizationId"
+                value={formData.organizationId}
+                onChange={handleChange}
+                required
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                <option value="" disabled>
+                  Select an organization
+                </option>
+                {organizationIds.map((orgId) => (
+                  <option key={orgId} value={orgId}>
+                    {orgId}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+            <div>
+              <label
                 htmlFor="role"
                 className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
               >
@@ -192,9 +222,32 @@ const FormUser: React.FC<{ setOpen: (open: boolean) => void }> = ({
                 required
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
+                <option value={Role.employee}>Employee</option>
+                <option value={Role.admin}>Admin</option>
               </select>
+            </div>
+          </div>
+
+          <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+            <div>
+              <label
+                htmlFor="hourlyRate"
+                className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
+              >
+                Hourly Rate
+              </label>
+            </div>
+            <div className="sm:col-span-2">
+              <input
+                type="number"
+                name="hourlyRate"
+                id="hourlyRate"
+                value={formData.hourlyRate}
+                onChange={handleChange}
+                step="0.1"
+                required
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
             </div>
           </div>
         </div>

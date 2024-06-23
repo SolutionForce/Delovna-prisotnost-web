@@ -1,5 +1,7 @@
 import { Attendance, Role, User } from "../../modules/interfaces/user";
 import { Timestamp } from 'firebase/firestore';
+import { getIdToken } from "./tokenId"; // Adjust the path as needed
+import { UserForRegistration } from "../interfaces/customUser";
 
 const calculateDifferenceInMinutes = (start: Timestamp, end: Timestamp | null) => {
   if (!end) return 0;
@@ -53,11 +55,24 @@ const calculateMetrics = (attendance: Attendance[]) => {
   };
 };
 
-export const fetchData = async (includeCalc : boolean): Promise<User[]> => {
+export const fetchData = async (includeCalc: boolean): Promise<User[]> => {
+
+  const idToken = await getIdToken();
+  if (!idToken) {
+    throw new Error("Unable to retrieve ID token");
+  }
+
+  
   try {
-    const response = await fetch(
-      "http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users"
-    );
+    const response = await fetch("http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "auth": `${idToken}`
+      },
+     
+    });
+    ;
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -65,7 +80,6 @@ export const fetchData = async (includeCalc : boolean): Promise<User[]> => {
     console.log("RESPONSE OF FUNCTION");
     console.log(responseData);
 
-    // Assuming the response data is in the correct format
     const users: User[] = responseData.map((item: any) => {
       const attendance: Attendance[] = item.attendance.map((att: any) => ({
         timeIn: new Timestamp(att.timeIn._seconds, att.timeIn._nanoseconds),
@@ -76,37 +90,33 @@ export const fetchData = async (includeCalc : boolean): Promise<User[]> => {
           description: br.description,
         })),
       }));
-if (includeCalc === true){
-  const calc = calculateMetrics(attendance);
-  console.log(calc)
-  return {
-    uid: item.uid,
-    name: item.name,
-    surname: item.surname,
-    email: item.email,
-    createdAt: new Timestamp(item.createdAt._seconds, item.createdAt._nanoseconds),
-    organizationId: item.organizationId,
-    role: item.role as Role,
-    attendance,
-    hourlyRate: item.hourlyRate,
-    calc,
-  };
-
-}
-return {
-  uid: item.uid,
-  name: item.name,
-  surname: item.surname,
-  email: item.email,
-  createdAt: new Timestamp(item.createdAt._seconds, item.createdAt._nanoseconds),
-  organizationId: item.organizationId,
-  role: item.role as Role,
-  attendance,
-  hourlyRate: item.hourlyRate,
-  
-};
-
-      
+      if (includeCalc) {
+        const calc = calculateMetrics(attendance);
+        console.log(calc);
+        return {
+          uid: item.uid,
+          name: item.name,
+          surname: item.surname,
+          email: item.email,
+          createdAt: new Timestamp(item.createdAt._seconds, item.createdAt._nanoseconds),
+          organizationId: item.organizationId,
+          role: item.role as Role,
+          attendance,
+          hourlyRate: item.hourlyRate,
+          calc,
+        };
+      }
+      return {
+        uid: item.uid,
+        name: item.name,
+        surname: item.surname,
+        email: item.email,
+        createdAt: new Timestamp(item.createdAt._seconds, item.createdAt._nanoseconds),
+        organizationId: item.organizationId,
+        role: item.role as Role,
+        attendance,
+        hourlyRate: item.hourlyRate,
+      };
     });
 
     return users;
@@ -115,3 +125,42 @@ return {
     return [];
   }
 };
+
+
+
+export const createEmployee = async (newUser: UserForRegistration) => {
+  try {
+    const idToken = await getIdToken();
+    if (!idToken) {
+      throw new Error("Unable to retrieve ID token");
+    }
+    console.log(newUser)
+
+    const response = await fetch("http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth": `${idToken}`
+      },
+      body: JSON.stringify(newUser)
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create user");
+    }
+
+    const createdUser = await response.json();
+    return createdUser;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+};
+
+
+// naredi delete  dodaj token in 
+//dodaj auth polek
+// delete
+// http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users/${uid}
+
+
