@@ -33,6 +33,7 @@ interface IAttendance {
 
 interface IUser {
   id: string;
+  uid: string;
   name: string;
   surname: string;
   attendance: IAttendance[];
@@ -78,7 +79,7 @@ export default function AppRoot() {
   }, []);
 
   const handleUserClick = (user: IUser) => {
-    navigate(`/user/${user.id}`);
+    navigate(`/user/${user.uid}`);
   };
 
   if (!isAuthenticated) {
@@ -177,7 +178,7 @@ export default function AppRoot() {
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
                           {users.map((user) => (
-                            <li key={user.id}>
+                            <li key={user.uid}>
                               <button
                                 onClick={() => handleUserClick(user)}
                                 className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
@@ -256,7 +257,7 @@ export default function AppRoot() {
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
                   {users.map((user) => (
-                    <li key={user.id}>
+                    <li key={user.uid}>
                       <button
                         onClick={() => handleUserClick(user)}
                         className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
