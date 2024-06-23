@@ -15,7 +15,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const loadUsers = async () => {
-      const data = await fetchData();
+      const data = await fetchData(true);
       setUsers(data);
       console.log("Fetched users:", data);
     };

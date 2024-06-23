@@ -2,24 +2,13 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Timestamp } from "firebase/firestore";
-
-interface IAttendanceBreak {
-  description: string;
-  start: any;
-  end: any;
-}
-
-interface IAttendance {
-  breaks: IAttendanceBreak[];
-  timeIn: any;
-  timeOut: any;
-}
+import { Attendance } from "../../modules/interfaces/user";
 
 interface IUserFormDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  initialData?: IAttendance | null;
-  onSave: (data: IAttendance) => void;
+  initialData?: Attendance | null;
+  onSave: (data: Attendance) => void;
 }
 
 const UserFormDialog: React.FC<IUserFormDialogProps> = ({
@@ -30,7 +19,9 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
 }) => {
   const [timeIn, setTimeIn] = useState<string>("");
   const [timeOut, setTimeOut] = useState<string>("");
-  const [breaks, setBreaks] = useState<IAttendanceBreak[]>([]);
+  const [breaks, setBreaks] = useState<
+    { description: string; start: Date; end: Date | null }[]
+  >([]);
 
   useEffect(() => {
     if (initialData) {
@@ -50,15 +41,13 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
       );
       setBreaks(
         initialData.breaks.map((b) => ({
-          ...b,
+          description: b.description,
           start:
             b.start instanceof Timestamp
               ? new Date(b.start.seconds * 1000)
               : new Date(),
           end:
-            b.end instanceof Timestamp
-              ? new Date(b.end.seconds * 1000)
-              : new Date(),
+            b.end instanceof Timestamp ? new Date(b.end.seconds * 1000) : null,
         }))
       );
     } else {
@@ -81,10 +70,7 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
   };
 
   const handleAddBreak = () => {
-    setBreaks([
-      ...breaks,
-      { description: "", start: new Date(), end: new Date() },
-    ]);
+    setBreaks([...breaks, { description: "", start: new Date(), end: null }]);
   };
 
   const handleRemoveBreak = (index: number) => {
@@ -95,13 +81,13 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const newAttendance: IAttendance = {
+      const newAttendance: Attendance = {
         timeIn: Timestamp.fromDate(new Date(timeIn)),
         timeOut: timeOut ? Timestamp.fromDate(new Date(timeOut)) : null,
         breaks: breaks.map((b) => ({
-          ...b,
+          description: b.description,
           start: Timestamp.fromDate(new Date(b.start)),
-          end: Timestamp.fromDate(new Date(b.end)),
+          end: b.end ? Timestamp.fromDate(new Date(b.end)) : null,
         })),
       };
       onSave(newAttendance);

@@ -53,7 +53,7 @@ const calculateMetrics = (attendance: Attendance[]) => {
   };
 };
 
-export const fetchData = async (): Promise<User[]> => {
+export const fetchData = async (includeCalc : boolean): Promise<User[]> => {
   try {
     const response = await fetch(
       "http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users"
@@ -76,22 +76,37 @@ export const fetchData = async (): Promise<User[]> => {
           description: br.description,
         })),
       }));
+if (includeCalc === true){
+  const calc = calculateMetrics(attendance);
+  console.log(calc)
+  return {
+    uid: item.uid,
+    name: item.name,
+    surname: item.surname,
+    email: item.email,
+    createdAt: new Timestamp(item.createdAt._seconds, item.createdAt._nanoseconds),
+    organizationId: item.organizationId,
+    role: item.role as Role,
+    attendance,
+    hourlyRate: item.hourlyRate,
+    calc,
+  };
 
-      const calc = calculateMetrics(attendance);
-      console.log(calc)
+}
+return {
+  uid: item.uid,
+  name: item.name,
+  surname: item.surname,
+  email: item.email,
+  createdAt: new Timestamp(item.createdAt._seconds, item.createdAt._nanoseconds),
+  organizationId: item.organizationId,
+  role: item.role as Role,
+  attendance,
+  hourlyRate: item.hourlyRate,
+  
+};
 
-      return {
-        uid: item.uid,
-        name: item.name,
-        surname: item.surname,
-        email: item.email,
-        createdAt: new Timestamp(item.createdAt._seconds, item.createdAt._nanoseconds),
-        organizationId: item.organizationId,
-        role: item.role as Role,
-        attendance,
-        hourlyRate: item.hourlyRate,
-        calc,
-      };
+      
     });
 
     return users;

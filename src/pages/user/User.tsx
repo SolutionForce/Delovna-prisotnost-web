@@ -22,7 +22,7 @@ export default function UserF() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const users = await fetchData();
+        const users = await fetchData(false);
         const fetchedUser = users.find((user) => user.uid === id);
         if (fetchedUser) {
           setUser(fetchedUser as User);
