@@ -1,24 +1,34 @@
 import { Timestamp } from "firebase/firestore";
-
 export enum Role {
     admin = "admin",
     employee = "employee",
-    guest = "guest"
-}
-
-export interface Break {
+    guest = "guest",
+  }
+  
+  export interface Break {
     start: Timestamp;
-    end: Timestamp|null;
+    end: Timestamp | null;
     description: string;
-}
-
-export interface Attendance {
+  }
+  
+  export interface Attendance {
     timeIn: Timestamp;
-    timeOut: Timestamp|null;
+    timeOut: Timestamp | null;
     breaks: Break[];
-}
-
-export interface User {
+  }
+  
+  export interface ICalculations {
+    totalTimeWorked: number;
+    totalBreakTime: number;
+    averageDailyWorkHours: number;
+    averageBreakTime: number;
+    lateArrivals: number;
+    overtimeHours: number;
+    hoursWorkedPerWeek: number;
+    hoursWorkedPerMonth: number;
+  }
+  
+  export interface User {
     uid: string;
     name: string;
     surname: string;
@@ -28,4 +38,6 @@ export interface User {
     role: Role;
     attendance: Attendance[];
     hourlyRate: number;
-}
+    calc?: ICalculations;
+  }
+  

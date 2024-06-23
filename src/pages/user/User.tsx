@@ -1,55 +1,33 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
-import { Timestamp } from "firebase/firestore";
+import { doc, setDoc, deleteDoc } from "firebase/firestore";
+
 import { firestore } from "../../firebase.ts";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import UserFormDialog from "./UserFormDialog";
+import { fetchData } from "../../modules/constants/fetchData.ts";
+import { User, Attendance } from "../../modules/interfaces/user.ts";
 
-interface IAttendanceBreak {
-  description: string;
-  start: any;
-  end: any;
-}
-
-interface IAttendance {
-  breaks: IAttendanceBreak[];
-  timeIn: any;
-  timeOut: any;
-}
-
-interface IUser {
-  id: string;
-  name: string;
-  surname: string;
-  attendance: IAttendance[];
-}
-
-export default function User() {
+export default function UserF() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentAttendance, setCurrentAttendance] =
-    useState<IAttendance | null>(null);
+  const [currentAttendance, setCurrentAttendance] = useState<Attendance | null>(
+    null
+  );
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if (id) {
-          const userDoc = await getDoc(doc(firestore, "users", id));
-          if (userDoc.exists()) {
-            const userData = userDoc.data() as IUser;
-            // Ensure attendance is initialized properly
-            if (!userData.attendance) {
-              userData.attendance = [];
-            }
-            setUser({ ...userData, id: userDoc.id });
-          } else {
-            setError("User not found.");
-          }
+        const users = await fetchData();
+        const fetchedUser = users.find((user) => user.uid === id);
+        if (fetchedUser) {
+          setUser(fetchedUser as User);
+        } else {
+          setError("User not found.");
         }
       } catch (error) {
         setError("There was an error loading the user data.");
@@ -65,13 +43,13 @@ export default function User() {
     setIsDialogOpen(true);
   };
 
-  const handleEditAttendance = (attendance: IAttendance, index: number) => {
+  const handleEditAttendance = (attendance: Attendance, index: number) => {
     setCurrentAttendance(attendance);
     setEditingIndex(index);
     setIsDialogOpen(true);
   };
 
-  const handleSaveAttendance = async (attendance: IAttendance) => {
+  const handleSaveAttendance = async (attendance: Attendance) => {
     try {
       if (user) {
         const updatedAttendance =
@@ -81,7 +59,7 @@ export default function User() {
               )
             : [...user.attendance, attendance];
         const updatedUser = { ...user, attendance: updatedAttendance };
-        await setDoc(doc(firestore, "users", user.id), updatedUser, {
+        await setDoc(doc(firestore, "users", user.uid), updatedUser, {
           merge: true,
         });
         setUser(updatedUser);
@@ -95,7 +73,7 @@ export default function User() {
   const handleDeleteUser = async () => {
     try {
       if (user) {
-        await deleteDoc(doc(firestore, "users", user.id));
+        await deleteDoc(doc(firestore, "users", user.uid));
         navigate("/dashboard");
       }
     } catch (error) {
@@ -181,7 +159,11 @@ export default function User() {
                   </p>
                   <p>
                     <span className="font-bold">End:</span>{" "}
-                    {new Date(breakRecord.end.seconds * 1000).toLocaleString()}
+                    {breakRecord.end
+                      ? new Date(
+                          breakRecord.end.seconds * 1000
+                        ).toLocaleString()
+                      : "N/A"}
                   </p>
                 </div>
               ))

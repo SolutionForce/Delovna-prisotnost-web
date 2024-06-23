@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-
+import { Timestamp } from "firebase/firestore";
 // Define types for the data structure
 type Worker = {
   name: string;
   work: string;
+  id: string;
 };
 
 type Shift = {
@@ -24,6 +25,7 @@ const fetchData = async (): Promise<Shift[]> => {
       throw new Error("Network response was not ok");
     }
     const responseData = await response.json();
+    console.log(responseData[0].attendance);
 
     // Extract and parse the 'attendance' field
     const attendanceData: Shift[] = responseData

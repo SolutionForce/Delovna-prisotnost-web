@@ -1,130 +1,123 @@
+import React from "react";
+import { User } from "../../../modules/interfaces/user";
 
-import BrandOne from './images/brand-01.svg';
-import BrandTwo from './images/brand-02.svg';
-import BrandThree from './images/brand-03.svg';
-import BrandFour from './images/brand-04.svg';
-import BrandFive from './images/brand-05.svg';
+interface TableOneProps {
+  selectedUsers: User[];
+}
 
- type BRAND = {
-    logo: string;
-    name: string;
-    visitors: number;
-    revenues: string;
-    sales: number;
-    conversion: number;
-  };
+const TableOne: React.FC<TableOneProps> = ({ selectedUsers }) => {
+  // Sort users based on totalTimeWorked and hourlyRate in descending order
+  const sortedUsers = [...selectedUsers].sort((a, b) => {
+    const totalTimeA = a.calc?.totalTimeWorked || 0;
+    const totalTimeB = b.calc?.totalTimeWorked || 0;
 
-const brandData: BRAND[] = [
-  {
-    logo: BrandOne,
-    name: 'Google',
-    visitors: 3.5,
-    revenues: '5,768',
-    sales: 590,
-    conversion: 4.8,
-  },
-  {
-    logo: BrandTwo,
-    name: 'Twitter',
-    visitors: 2.2,
-    revenues: '4,635',
-    sales: 467,
-    conversion: 4.3,
-  },
-  {
-    logo: BrandThree,
-    name: 'Github',
-    visitors: 2.1,
-    revenues: '4,290',
-    sales: 420,
-    conversion: 3.7,
-  },
-  {
-    logo: BrandFour,
-    name: 'Vimeo',
-    visitors: 1.5,
-    revenues: '3,580',
-    sales: 389,
-    conversion: 2.5,
-  },
-  {
-    logo: BrandFive,
-    name: 'Facebook',
-    visitors: 3.5,
-    revenues: '6,768',
-    sales: 390,
-    conversion: 4.2,
-  },
-];
+    if (totalTimeB !== totalTimeA) {
+      return totalTimeB - totalTimeA;
+    } else {
+      return (b.hourlyRate || 0) - (a.hourlyRate || 0);
+    }
+  });
 
-const TableOne = () => {
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        Top Channels
-      </h4>
+    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default sm:px-7.5 xl:pb-1">
+      <h4 className="mb-6 text-xl font-semibold text-black">Top Employees</h4>
 
       <div className="flex flex-col">
-        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
+        <div className="grid grid-cols-5 rounded-sm bg-gray-2 sm:grid-cols-7">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Source
+              Employee
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Visitors
+              Name
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Revenues
+              Total Work Time
+            </h5>
+          </div>
+          <div className="p-2.5 text-center xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Total Break Time
             </h5>
           </div>
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Sales
+              Average Daily Work Hours
             </h5>
           </div>
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Conversion
+              Average Break Time
+            </h5>
+          </div>
+          <div className="p-2.5 text-center xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Hourly Rate
             </h5>
           </div>
         </div>
 
-        {brandData.map((brand, key) => (
+        {sortedUsers.map((user, key) => (
           <div
-            className={`grid grid-cols-3 sm:grid-cols-5 ${
-              key === brandData.length - 1
-                ? ''
-                : 'border-b border-stroke dark:border-strokedark'
+            className={`grid grid-cols-5 sm:grid-cols-7 ${
+              key === sortedUsers.length - 1 ? "" : "border-b border-stroke"
             }`}
-            key={key}
+            key={user.uid}
           >
+            <div className="flex items-center justify-center p-2.5 xl:p-5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                />
+              </svg>
+            </div>
             <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
-                <img src={brand.logo} alt="Brand" />
-              </div>
-              <p className="hidden text-black dark:text-white sm:block">
-                {brand.name}
+              <p className="hidden text-black sm:block">
+                {user.name} {user.surname}
               </p>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.visitors}K</p>
+              <p className="text-black">
+                {(user.calc?.totalTimeWorked || 0).toFixed(2)} hours
+              </p>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-meta-3">${brand.revenues}</p>
+              <p className="text-meta-3">
+                {(user.calc?.totalBreakTime || 0).toFixed(2)} hours
+              </p>
             </div>
 
             <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-black dark:text-white">{brand.sales}</p>
+              <p className="text-black">
+                {(user.calc?.averageDailyWorkHours || 0).toFixed(2)} hours
+              </p>
             </div>
 
             <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-meta-5">{brand.conversion}%</p>
+              <p className="text-meta-5">
+                {(user.calc?.averageBreakTime || 0).toFixed(2)} hours
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center p-2.5 xl:p-5">
+              <p className="text-black">
+                {user.hourlyRate?.toFixed(2) || "N/A"} €
+              </p>
             </div>
           </div>
         ))}
