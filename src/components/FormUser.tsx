@@ -19,7 +19,7 @@ const FormUser: React.FC<{
     hourlyRate: "", // Add hourlyRate to the form state
   });
 
-  const [organizationIds, setOrganizationIds] = useState([
+  const [organizationIds, ] = useState([
     "bJHcvlNbZalnmNWPzXei",
   ]);
 

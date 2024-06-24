@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { User } from "../../../modules/interfaces/user";
 import { UserWithCalculations } from "../../../modules/interfaces/customUser";
 
 interface TableOneProps {

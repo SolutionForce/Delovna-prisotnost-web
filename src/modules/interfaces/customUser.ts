@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import {Attendance, Role, User} from "./user"
+import {Attendance, Role} from "./user"
 
 
   export interface ICalculations {

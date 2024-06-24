@@ -98,7 +98,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
           onChange={(value) => handleSelectionChange(value)}
           multiple={multiSelect}
         >
-          {({ open }) => (
+          {({ }) => (
             <>
               <div className="relative mt-2">
                 <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -119,7 +119,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                   {items.map((person) => (
                     <ListboxOption
                       key={person.uid}
-                      className={({ active, selected }) =>
+                      className={({ selected }) =>
                         classNames(
                           selected
                             ? "bg-purple-400 text-white"
