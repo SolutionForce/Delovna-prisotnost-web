@@ -4,7 +4,10 @@ import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon, PencilIcon } from "@heroicons/react/24/outline";
 import UserFormDialog from "./UserFormDialog";
-import { fetchData } from "../../modules/constants/fetchData.ts";
+import {
+  deleteUserAttendance,
+  fetchData,
+} from "../../modules/constants/fetchData.ts";
 import { User, Attendance, Role } from "../../modules/interfaces/user.ts";
 import { firestore } from "../../firebase.ts";
 
@@ -66,6 +69,7 @@ export default function UserF({ reload }: any) {
   };
 
   const handleSaveAttendance = async (attendance: Attendance) => {
+    console.log(attendance);
     try {
       if (user) {
         const updatedAttendance =
@@ -98,8 +102,16 @@ export default function UserF({ reload }: any) {
     }
   };
 
-  const handleRemoveAttendance = (index: number) => {
-    console.log("REMOVING ATTENDANCE", id, index);
+  const handleRemoveAttendance = async (index: number) => {
+    try {
+      if (user) {
+        await deleteUserAttendance(user.uid, index);
+        const updatedAttendance = user.attendance.filter((_, i) => i !== index);
+        setUser({ ...user, attendance: updatedAttendance });
+      }
+    } catch (error) {
+      console.error("Error deleting attendance:", error);
+    }
   };
 
   const handleSaveUser = async (updatedUser: User) => {

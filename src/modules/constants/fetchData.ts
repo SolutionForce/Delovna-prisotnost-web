@@ -64,7 +64,7 @@ export const fetchData = async (includeCalc: boolean): Promise<User[]> => {
 
   
   try {
-    const response = await fetch("http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users/", {
+    const response = await fetch("https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +136,7 @@ export const createEmployee = async (newUser: UserForRegistration) => {
     }
     console.log(newUser)
 
-    const response = await fetch("http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users/", {
+    const response = await fetch("https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -157,10 +157,90 @@ export const createEmployee = async (newUser: UserForRegistration) => {
   }
 };
 
+export const updateUser = async (updatedUser: User): Promise<User> => {
+  try {
+    const idToken = await getIdToken();
+    if (!idToken) {
+      throw new Error("Unable to retrieve ID token");
+    }
+
+    const { uid, ...updatedData } = updatedUser;
+
+    const response = await fetch(`https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/${uid}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "auth": `${idToken}`
+      },
+      body: JSON.stringify(updatedData)
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update user");
+    }
+
+    const updatedUserResponse = await response.json();
+    return updatedUserResponse;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+export const deleteUser = async (uid: string): Promise<void> => {
+  try {
+    const idToken = await getIdToken();
+    if (!idToken) {
+      throw new Error("Unable to retrieve ID token");
+    }
+
+    const response = await fetch(`https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/${uid}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "auth": `${idToken}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete user");
+    }
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};
+
+export const deleteUserAttendance = async (uid: string, index: number): Promise<void> => {
+  try {
+    const idToken = await getIdToken();
+    if (!idToken) {
+      throw new Error("Unable to retrieve ID token");
+    }
+
+    const response = await fetch(`https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/${uid}/attendance/${index}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "auth": `${idToken}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete attendance");
+    }
+  } catch (error) {
+    console.error("Error deleting attendance:", error);
+    throw error;
+  }
+};
+
+
+
 
 // naredi delete  dodaj token in 
 //dodaj auth polek
 // delete
-// http://127.0.0.1:5001/rvir-1e34e/us-central1/api/users/${uid}
+// https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/${uid}
 
 

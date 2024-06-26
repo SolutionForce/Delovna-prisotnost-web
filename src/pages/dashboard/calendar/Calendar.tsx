@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// Define types for the data structure
+
 type Worker = {
   name: string;
   work: string;
@@ -14,11 +14,10 @@ type Shift = {
   AfternoonShift: Worker[];
 };
 
-// Simulate fetching data
 const fetchData = async (): Promise<Shift[]> => {
   try {
     const response = await fetch(
-      "http://127.0.0.1:5001/rvir-1e34e/us-central1/api/timetables"
+      "https://us-central1-rvir-1e34e.cloudfunctions.net/api/timetables"
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -26,7 +25,6 @@ const fetchData = async (): Promise<Shift[]> => {
     const responseData = await response.json();
     console.log(responseData[0].attendance);
 
-    // Extract and parse the 'attendance' field
     const attendanceData: Shift[] = responseData
       .map((item: any) => {
         return JSON.parse(item.attendance);
@@ -44,13 +42,31 @@ const daysInMonth = (month: number, year: number): number => {
   return new Date(year, month, 0).getDate();
 };
 
-const generateCalendar = (month: number, year: number): number[] => {
+const generateCalendar = (month: number, year: number): (number | null)[] => {
   const days = daysInMonth(month, year);
-  const calendar = Array.from({ length: days }, (_, i) => i + 1);
+  const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+  const calendar: (number | null)[] = [];
 
-  // If less than 5 weeks (35 days), add days from the next month
-  while (calendar.length < 35) {
-    calendar.push(calendar.length + 1 - days);
+  // Get the number of days in the previous month
+  const prevMonthDays = daysInMonth(month - 1, year);
+
+  // Adjust firstDayOfMonth to consider Monday as the first day
+  const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+  // Fill in the days from the previous month
+  for (let i = 0; i < adjustedFirstDay; i++) {
+    calendar.push(prevMonthDays - adjustedFirstDay + i + 1);
+  }
+
+  // Fill in the days of the current month
+  for (let i = 1; i <= days; i++) {
+    calendar.push(i);
+  }
+
+  // Fill in the days from the next month
+  const nextMonthDays = 42 - calendar.length;
+  for (let i = 1; i <= nextMonthDays; i++) {
+    calendar.push(i);
   }
 
   return calendar;
@@ -58,7 +74,7 @@ const generateCalendar = (month: number, year: number): number[] => {
 
 const Calendar = () => {
   const [shifts, setShifts] = useState<Shift[]>([]);
-  const [calendar, setCalendar] = useState<number[]>([]);
+  const [calendar, setCalendar] = useState<(number | null)[]>([]);
   const [currentMonth, setCurrentMonth] = useState<number>(
     new Date().getMonth() + 1
   );
@@ -114,7 +130,7 @@ const Calendar = () => {
       <div className="flex justify-between items-center p-4 bg-purple-400 text-white">
         <button onClick={handlePreviousMonth}>Previous</button>
         <h2 className="text-lg font-bold">
-          {new Date(currentYear, currentMonth - 1).toLocaleString("default", {
+          {new Date(currentYear, currentMonth - 1).toLocaleString("en", {
             month: "long",
           })}{" "}
           {currentYear}
@@ -125,10 +141,6 @@ const Calendar = () => {
         <thead>
           <tr className="grid grid-cols-7 rounded-t-sm bg-purple-400 text-black">
             <th className="flex h-15 items-center justify-center rounded-tl-sm p-1 text-xs font-semibold sm:text-base xl:p-5">
-              <span className="hidden lg:block">Sunday</span>
-              <span className="block lg:hidden">Sun</span>
-            </th>
-            <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
               <span className="hidden lg:block">Monday</span>
               <span className="block lg:hidden">Mon</span>
             </th>
@@ -142,15 +154,19 @@ const Calendar = () => {
             </th>
             <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
               <span className="hidden lg:block">Thursday</span>
-              <span className="block lg:hidden">Thur</span>
+              <span className="block lg:hidden">Thu</span>
             </th>
             <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
               <span className="hidden lg:block">Friday</span>
               <span className="block lg:hidden">Fri</span>
             </th>
-            <th className="flex h-15 items-center justify-center rounded-tr-sm p-1 text-xs font-semibold sm:text-base xl:p-5">
+            <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
               <span className="hidden lg:block">Saturday</span>
               <span className="block lg:hidden">Sat</span>
+            </th>
+            <th className="flex h-15 items-center justify-center rounded-tr-sm p-1 text-xs font-semibold sm:text-base xl:p-5">
+              <span className="hidden lg:block">Sunday</span>
+              <span className="block lg:hidden">Sun</span>
             </th>
           </tr>
         </thead>
@@ -215,7 +231,7 @@ const Calendar = () => {
                     className={`ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-purple-300 md:h-25 md:p-6 xl:h-31 ${
                       isToday ? "bg-purple-200" : ""
                     }`}
-                    onClick={() => setSelectedDay(day)}
+                    onClick={() => setSelectedDay(day!)}
                   >
                     <span className="font-medium text-black">{day}</span>
                   </td>
