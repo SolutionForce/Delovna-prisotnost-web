@@ -36,8 +36,8 @@ const ChartTotalEarnings: React.FC<ChartTotalEarningsProps> = ({
         data: selectedUsers.map(
           (user) => (user.calc?.totalTimeWorked || 0) * user.hourlyRate
         ),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(168, 85, 247, 0.6)",
+        borderColor: "rgba(168, 85, 247, 1)",
         borderWidth: 1,
       },
     ],

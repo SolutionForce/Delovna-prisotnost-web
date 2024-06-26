@@ -33,15 +33,15 @@ const ChartTwo: React.FC<ChartTwoProps> = ({ selectedUsers }) => {
       {
         label: "Total Work Time (hours)",
         data: selectedUsers.map((user) => user.calc?.totalTimeWorked || 0),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(168, 85, 247, 0.6)", // Tailwind purple-400
+        borderColor: "rgba(168, 85, 247, 1)", // Tailwind purple-400
         borderWidth: 1,
       },
       {
         label: "Total Break Time (hours)",
         data: selectedUsers.map((user) => user.calc?.totalBreakTime || 0),
-        backgroundColor: "rgba(153, 102, 255, 0.6)",
-        borderColor: "rgba(153, 102, 255, 1)",
+        backgroundColor: "rgba(74, 222, 128, 1)", // Tailwind green-400
+        borderColor: "rgba(74, 222, 128, 1)", // Tailwind green-400
         borderWidth: 1,
       },
     ],

@@ -123,8 +123,8 @@ const Calendar = () => {
   };
 
   return (
-    <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default relative">
-      <div className="flex justify-between items-center p-4 bg-purple-400 text-white">
+    <div className="w-full max-w-full  border-stroke bg-white shadow-default relative">
+      <div className="flex justify-between items-center p-4 bg-purple-400  text-white rounded-t-lg">
         <button onClick={handlePreviousMonth}>Previous</button>
         <h2 className="text-lg font-bold">
           {new Date(currentYear, currentMonth - 1).toLocaleString("en", {
@@ -136,7 +136,7 @@ const Calendar = () => {
       </div>
       <table className="w-full">
         <thead>
-          <tr className="grid grid-cols-7 rounded-t-sm bg-purple-400 text-black">
+          <tr className="grid grid-cols-7 bg-purple-400 text-black">
             <th className="flex h-15 items-center justify-center rounded-tl-sm p-1 text-xs font-semibold sm:text-base xl:p-5">
               <span className="hidden lg:block">Monday</span>
               <span className="block lg:hidden">Mon</span>
@@ -225,8 +225,8 @@ const Calendar = () => {
                 return (
                   <td
                     key={dayIndex}
-                    className={`ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-purple-300 md:h-25 md:p-6 xl:h-31 ${
-                      isToday ? "bg-purple-200" : ""
+                    className={`ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-purple-400 md:h-25 md:p-6 xl:h-31 ${
+                      isToday ? "bg-purple-100" : ""
                     }`}
                     onClick={() => day && setSelectedDay(day)}
                   >

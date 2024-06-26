@@ -36,15 +36,15 @@ const ChartAttendanceTrends: React.FC<ChartAttendanceTrendsProps> = ({
       {
         label: "Late Arrivals",
         data: selectedUsers.map((user) => user.calc?.lateArrivals || 0),
-        borderColor: "rgba(255, 99, 132, 1)",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(168, 85, 247, 1)", // Tailwind purple-300
+        backgroundColor: "rgba(168, 85, 247, 0.6)", // Tailwind purple-300 with opacity
         borderWidth: 1,
       },
       {
         label: "Overtime Hours",
         data: selectedUsers.map((user) => user.calc?.overtimeHours || 0),
-        borderColor: "rgba(54, 162, 235, 1)",
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(74, 222, 128, 1)", // Tailwind green-400
+        backgroundColor: "rgba(74, 222, 128, 0.2)", // Tailwind green-400 with opacity
         borderWidth: 1,
       },
     ],

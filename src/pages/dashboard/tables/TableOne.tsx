@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { UserWithCalculations } from "../../../modules/interfaces/customUser";
+import { Link } from "react-router-dom";
 
 interface TableOneProps {
   selectedUsers: UserWithCalculations[];
@@ -108,11 +109,9 @@ const TableOne: React.FC<TableOneProps> = ({ selectedUsers }) => {
   };
 
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default sm:px-7.5 xl:pb-1">
-      <h4 className="mb-6 text-xl font-semibold text-black">Top Employees</h4>
-
+    <div className="rounded-t-lg  border-stroke bg-white shadow-default sm:px-7.5 xl:pb-1">
       <div className="flex flex-col">
-        <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 rounded-sm bg-gray-2">
+        <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 rounded-t-lg bg-purple-400 text-white border border-purple-400">
           <div className="p-2.5 xl:p-5">
             <button
               type="button"
@@ -177,67 +176,73 @@ const TableOne: React.FC<TableOneProps> = ({ selectedUsers }) => {
             </button>
           </div>
         </div>
+        <div className="border">
+          {sortedUsers.map((user, key) => (
+            <div
+              className={`grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7  ${
+                key === sortedUsers.length - 1 ? "" : "border-b border-stroke"
+              }`}
+              key={user.uid}
+            >
+              <div className="flex items-center justify-center p-2.5 xl:p-5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                  />
+                </svg>
+              </div>
+              <div className="flex items-center gap-3 p-2.5 xl:p-5">
+                <p className="text-black">
+                  <Link
+                    to={`/user/${user.uid}`}
+                    className="text-black hover:underline"
+                  >
+                    {user.name} {user.surname}
+                  </Link>
+                </p>
+              </div>
 
-        {sortedUsers.map((user, key) => (
-          <div
-            className={`grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 ${
-              key === sortedUsers.length - 1 ? "" : "border-b border-stroke"
-            }`}
-            key={user.uid}
-          >
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                />
-              </svg>
-            </div>
-            <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <p className="text-black">
-                {user.name} {user.surname}
-              </p>
-            </div>
+              <div className="flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-black">
+                  {(user.calc?.totalTimeWorked || 0).toFixed(2)} hours
+                </p>
+              </div>
 
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black">
-                {(user.calc?.totalTimeWorked || 0).toFixed(2)} hours
-              </p>
-            </div>
+              <div className="flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-meta-3">
+                  {(user.calc?.totalBreakTime || 0).toFixed(2)} hours
+                </p>
+              </div>
 
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-meta-3">
-                {(user.calc?.totalBreakTime || 0).toFixed(2)} hours
-              </p>
-            </div>
+              <div className="hidden lg:flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-black">
+                  {(user.calc?.averageDailyWorkHours || 0).toFixed(2)} hours
+                </p>
+              </div>
 
-            <div className="hidden lg:flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black">
-                {(user.calc?.averageDailyWorkHours || 0).toFixed(2)} hours
-              </p>
-            </div>
+              <div className="hidden lg:flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-meta-5">
+                  {(user.calc?.averageBreakTime || 0).toFixed(2)} hours
+                </p>
+              </div>
 
-            <div className="hidden lg:flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-meta-5">
-                {(user.calc?.averageBreakTime || 0).toFixed(2)} hours
-              </p>
+              <div className="flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-black">
+                  {user.hourlyRate?.toFixed(2) || "N/A"} €
+                </p>
+              </div>
             </div>
-
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black">
-                {user.hourlyRate?.toFixed(2) || "N/A"} €
-              </p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

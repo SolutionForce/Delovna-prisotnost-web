@@ -16,6 +16,7 @@ import {
 import { User, Attendance, Role } from "../../modules/interfaces/user.ts";
 import { firestore } from "../../firebase.ts";
 import { OrganizationWithId } from "../../modules/interfaces/organization";
+import { ExportPDFButton } from "./ExportPDFButton.tsx";
 
 export default function UserF({ reload }: any) {
   const { id } = useParams<{ id: string }>();
@@ -140,9 +141,6 @@ export default function UserF({ reload }: any) {
   if (!user) {
     return <div>Loading...</div>;
   }
-  const exportToPDF = () => {
-    console.log("Exporting to pdf");
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -153,7 +151,7 @@ export default function UserF({ reload }: any) {
       <div className="flex space-x-4 mb-4">
         <button
           type="button"
-          className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
+          className="inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-700"
           onClick={handleAddAttendance}
         >
           <PlusIcon className="h-5 w-5 mr-2" aria-hidden="true" />
@@ -174,14 +172,7 @@ export default function UserF({ reload }: any) {
           <PencilIcon className="h-5 w-5 mr-2" aria-hidden="true" />
           Edit User
         </button>
-        <button
-          type="button"
-          className="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600"
-          onClick={() => exportToPDF()}
-        >
-          <ArrowDownCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
-          Export PDF
-        </button>
+        <ExportPDFButton user={user} />
       </div>
 
       {user.attendance.length > 0 ? (
@@ -195,7 +186,7 @@ export default function UserF({ reload }: any) {
               <div>
                 <button
                   type="button"
-                  className="text-blue-600 hover:text-blue-900 mr-4"
+                  className="text-purple-600 hover:text-purple-900 mr-4"
                   onClick={() => handleEditAttendance(record, index)}
                 >
                   Edit
@@ -226,7 +217,7 @@ export default function UserF({ reload }: any) {
               record.breaks.map((breakRecord, idx) => (
                 <div
                   key={idx}
-                  className="mb-2 pl-4 border-l-2 border-indigo-500"
+                  className="mb-2 pl-4 border-l-2 border-purple-500"
                 >
                   <p>
                     <span className="font-bold">Description:</span>{" "}
@@ -268,12 +259,12 @@ export default function UserF({ reload }: any) {
         </div>
         <div className="border-t border-gray-200">
           <dl>
-            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            {/* <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">UID</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 {user.uid}
               </dd>
-            </div>
+            </div> */}
             <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Name</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -401,7 +392,7 @@ export default function UserF({ reload }: any) {
                     </button>
                     <button
                       type="button"
-                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-1 sm:mt-0 sm:text-sm"
+                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:col-start-1 sm:mt-0 sm:text-sm"
                       onClick={() => setIsDeleteDialogOpen(false)}
                     >
                       Cancel
@@ -495,7 +486,7 @@ export default function UserF({ reload }: any) {
                               id="name"
                               defaultValue={user.name}
                               required
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                             />
                           </div>
                           <div>
@@ -511,7 +502,7 @@ export default function UserF({ reload }: any) {
                               id="surname"
                               defaultValue={user.surname}
                               required
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                             />
                           </div>
                           <div>
@@ -527,7 +518,7 @@ export default function UserF({ reload }: any) {
                               id="email"
                               defaultValue={user.email}
                               required
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                             />
                           </div>
                           <div>
@@ -542,14 +533,14 @@ export default function UserF({ reload }: any) {
                               id="organizationId"
                               defaultValue={user.organizationId}
                               required
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                             >
                               <option value="" disabled>
                                 Select an organization
                               </option>
                               {organizations.map((org) => (
                                 <option key={org.id} value={org.id}>
-                                  {org.name} ({org.id})
+                                  {org.name}
                                 </option>
                               ))}
                             </select>
@@ -566,7 +557,7 @@ export default function UserF({ reload }: any) {
                               id="role"
                               defaultValue={user.role}
                               required
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                             >
                               <option value={Role.employee}>Employee</option>
                               <option value={Role.admin}>Admin</option>
@@ -587,7 +578,7 @@ export default function UserF({ reload }: any) {
                               step="0.1"
                               defaultValue={user.hourlyRate}
                               required
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                             />
                           </div>
                           <div className="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
@@ -599,7 +590,7 @@ export default function UserF({ reload }: any) {
                             </button>
                             <button
                               type="button"
-                              className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                              className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                               onClick={() => setIsEditDialogOpen(false)}
                             >
                               Cancel
