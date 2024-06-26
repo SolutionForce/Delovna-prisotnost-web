@@ -8,6 +8,7 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { UserWithCalculations } from "../../../modules/interfaces/customUser";
 import { Role } from "../../../modules/interfaces/user";
+import { ArrowDownCircleIcon } from "@heroicons/react/24/outline";
 
 type SelectMenuProps = {
   items: UserWithCalculations[];
@@ -90,6 +91,9 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
     }
   };
 
+  const exportToPDF = () => {
+    console.log("Exporting to PDF");
+  };
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-4">
       <div className="flex-grow w-full sm:w-auto">
@@ -167,16 +171,16 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
           )}
         </Listbox>
       </div>
-      <div className="flex flex-wrap space-x-2 mt-4 sm:mt-0 sm:flex-nowrap">
+      <div className="flex flex-wrap space-x-0 space-y-2 sm:space-x-2 sm:space-y-0 mt-4 sm:mt-0 sm:flex-nowrap">
         <button
           onClick={selectAllEmployees}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-md mb-2 sm:mb-0"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-md"
         >
           All Employees
         </button>
         <button
           onClick={selectAllUsers}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md mb-2 sm:mb-0"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md"
         >
           All Users
         </button>
@@ -185,6 +189,14 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
           className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-md"
         >
           Clear Users
+        </button>
+        <button
+          type="button"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-md inline-flex items-center justify-center"
+          onClick={() => exportToPDF()}
+        >
+          <ArrowDownCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+          Export PDF
         </button>
       </div>
     </div>

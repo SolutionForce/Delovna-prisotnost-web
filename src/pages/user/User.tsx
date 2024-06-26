@@ -2,18 +2,20 @@ import { useEffect, useState, Fragment } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { Dialog, Transition } from "@headlessui/react";
-import { PlusIcon, PencilIcon } from "@heroicons/react/24/outline";
+import {
+  PlusIcon,
+  PencilIcon,
+  ArrowDownCircleIcon,
+} from "@heroicons/react/24/outline";
 import UserFormDialog from "./UserFormDialog";
 import {
   deleteUserAttendance,
   fetchData,
+  getOrganizations,
 } from "../../modules/constants/fetchData.ts";
 import { User, Attendance, Role } from "../../modules/interfaces/user.ts";
 import { firestore } from "../../firebase.ts";
-
-const fetchOrganizations = async () => {
-  return ["bJHcvlNbZalnmNWPzXei"];
-};
+import { OrganizationWithId } from "../../modules/interfaces/organization";
 
 export default function UserF({ reload }: any) {
   const { id } = useParams<{ id: string }>();
@@ -27,7 +29,7 @@ export default function UserF({ reload }: any) {
     null
   );
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [organizationIds, setOrganizationIds] = useState<string[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationWithId[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -49,8 +51,13 @@ export default function UserF({ reload }: any) {
 
   useEffect(() => {
     const fetchOrgIds = async () => {
-      const orgIds = await fetchOrganizations();
-      setOrganizationIds(orgIds);
+      try {
+        const orgs = await getOrganizations();
+        console.log("Fetched Organizations: ", orgs);
+        setOrganizations(orgs);
+      } catch (error) {
+        console.error("Error fetching organizations: ", error);
+      }
     };
 
     fetchOrgIds();
@@ -133,6 +140,9 @@ export default function UserF({ reload }: any) {
   if (!user) {
     return <div>Loading...</div>;
   }
+  const exportToPDF = () => {
+    console.log("Exporting to pdf");
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -163,6 +173,14 @@ export default function UserF({ reload }: any) {
         >
           <PencilIcon className="h-5 w-5 mr-2" aria-hidden="true" />
           Edit User
+        </button>
+        <button
+          type="button"
+          className="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600"
+          onClick={() => exportToPDF()}
+        >
+          <ArrowDownCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+          Export PDF
         </button>
       </div>
 
@@ -282,10 +300,14 @@ export default function UserF({ reload }: any) {
             </div>
             <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">
-                Organization ID
+                Organization
               </dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {user.organizationId}
+                {
+                  organizations.find((org) => org.id === user.organizationId)
+                    ?.name
+                }{" "}
+                ({user.organizationId})
               </dd>
             </div>
             <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -513,7 +535,7 @@ export default function UserF({ reload }: any) {
                               htmlFor="organizationId"
                               className="block text-sm font-medium text-gray-700"
                             >
-                              Organization ID
+                              Organization
                             </label>
                             <select
                               name="organizationId"
@@ -522,9 +544,12 @@ export default function UserF({ reload }: any) {
                               required
                               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             >
-                              {organizationIds.map((orgId) => (
-                                <option key={orgId} value={orgId}>
-                                  {orgId}
+                              <option value="" disabled>
+                                Select an organization
+                              </option>
+                              {organizations.map((org) => (
+                                <option key={org.id} value={org.id}>
+                                  {org.name} ({org.id})
                                 </option>
                               ))}
                             </select>

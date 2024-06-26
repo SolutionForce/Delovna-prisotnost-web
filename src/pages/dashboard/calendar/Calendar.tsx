@@ -47,15 +47,12 @@ const generateCalendar = (month: number, year: number): (number | null)[] => {
   const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
   const calendar: (number | null)[] = [];
 
-  // Get the number of days in the previous month
-  const prevMonthDays = daysInMonth(month - 1, year);
-
   // Adjust firstDayOfMonth to consider Monday as the first day
   const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
-  // Fill in the days from the previous month
+  // Fill in the days from the previous month with null
   for (let i = 0; i < adjustedFirstDay; i++) {
-    calendar.push(prevMonthDays - adjustedFirstDay + i + 1);
+    calendar.push(null);
   }
 
   // Fill in the days of the current month
@@ -63,10 +60,10 @@ const generateCalendar = (month: number, year: number): (number | null)[] => {
     calendar.push(i);
   }
 
-  // Fill in the days from the next month
+  // Fill in the days from the next month with null
   const nextMonthDays = 42 - calendar.length;
-  for (let i = 1; i <= nextMonthDays; i++) {
-    calendar.push(i);
+  for (let i = 0; i < nextMonthDays; i++) {
+    calendar.push(null);
   }
 
   return calendar;
@@ -231,9 +228,11 @@ const Calendar = () => {
                     className={`ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-purple-300 md:h-25 md:p-6 xl:h-31 ${
                       isToday ? "bg-purple-200" : ""
                     }`}
-                    onClick={() => setSelectedDay(day!)}
+                    onClick={() => day && setSelectedDay(day)}
                   >
-                    <span className="font-medium text-black">{day}</span>
+                    <span className="font-medium text-black">
+                      {day ? day : ""}
+                    </span>
                   </td>
                 );
               })}

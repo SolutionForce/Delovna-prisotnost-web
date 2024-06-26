@@ -17,49 +17,33 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
   initialData,
   onSave,
 }) => {
-  const [timeIn, setTimeIn] = useState<string>("");
-  const [timeOut, setTimeOut] = useState<string>("");
+  const [timeIn, setTimeIn] = useState<Date | null>(null);
+  const [timeOut, setTimeOut] = useState<Date | null>(null);
   const [breaks, setBreaks] = useState<
     { description: string; start: Date; end: Date | null }[]
   >([]);
 
   useEffect(() => {
     if (initialData) {
-      setTimeIn(
-        initialData.timeIn instanceof Timestamp
-          ? new Date(initialData.timeIn.seconds * 1000)
-              .toISOString()
-              .slice(0, 16)
-          : ""
-      );
-      setTimeOut(
-        initialData.timeOut && initialData.timeOut instanceof Timestamp
-          ? new Date(initialData.timeOut.seconds * 1000)
-              .toISOString()
-              .slice(0, 16)
-          : ""
-      );
+      setTimeIn(initialData.timeIn.toDate());
+      setTimeOut(initialData.timeOut ? initialData.timeOut.toDate() : null);
       setBreaks(
         initialData.breaks.map((b) => ({
           description: b.description,
-          start:
-            b.start instanceof Timestamp
-              ? new Date(b.start.seconds * 1000)
-              : new Date(),
-          end:
-            b.end instanceof Timestamp ? new Date(b.end.seconds * 1000) : null,
+          start: b.start.toDate(),
+          end: b.end ? b.end.toDate() : null,
         }))
       );
     } else {
-      setTimeIn("");
-      setTimeOut("");
+      setTimeIn(new Date());
+      setTimeOut(null);
       setBreaks([]);
     }
   }, [initialData]);
 
-  const handleBreakChange = (index: number, field: string, value: string) => {
+  const handleBreakChange = (index: number, field: string, value: Date) => {
     const newBreaks = [...breaks];
-    newBreaks[index] = { ...newBreaks[index], [field]: new Date(value) };
+    newBreaks[index] = { ...newBreaks[index], [field]: value };
     setBreaks(newBreaks);
   };
 
@@ -82,12 +66,12 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
     e.preventDefault();
     try {
       const newAttendance: Attendance = {
-        timeIn: Timestamp.fromDate(new Date(timeIn)),
-        timeOut: timeOut ? Timestamp.fromDate(new Date(timeOut)) : null,
+        timeIn: Timestamp.fromDate(timeIn!),
+        timeOut: timeOut ? Timestamp.fromDate(timeOut) : null,
         breaks: breaks.map((b) => ({
           description: b.description,
-          start: Timestamp.fromDate(new Date(b.start)),
-          end: b.end ? Timestamp.fromDate(new Date(b.end)) : null,
+          start: Timestamp.fromDate(b.start),
+          end: b.end ? Timestamp.fromDate(b.end) : null,
         })),
       };
       onSave(newAttendance);
@@ -156,8 +140,10 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
                           type="datetime-local"
                           id="timeIn"
                           name="timeIn"
-                          value={timeIn}
-                          onChange={(e) => setTimeIn(e.target.value)}
+                          value={
+                            timeIn ? timeIn.toISOString().slice(0, 16) : ""
+                          }
+                          onChange={(e) => setTimeIn(new Date(e.target.value))}
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           required
                         />
@@ -173,10 +159,11 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
                           type="datetime-local"
                           id="timeOut"
                           name="timeOut"
-                          value={timeOut}
-                          onChange={(e) => setTimeOut(e.target.value)}
+                          value={
+                            timeOut ? timeOut.toISOString().slice(0, 16) : ""
+                          }
+                          onChange={(e) => setTimeOut(new Date(e.target.value))}
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          required
                         />
                       </div>
                       <div>
@@ -218,7 +205,7 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
                                 name={`break-start-${index}`}
                                 value={
                                   breakRecord.start
-                                    ? new Date(breakRecord.start)
+                                    ? breakRecord.start
                                         .toISOString()
                                         .slice(0, 16)
                                     : ""
@@ -227,7 +214,7 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
                                   handleBreakChange(
                                     index,
                                     "start",
-                                    e.target.value
+                                    new Date(e.target.value)
                                   )
                                 }
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -247,20 +234,17 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
                                 name={`break-end-${index}`}
                                 value={
                                   breakRecord.end
-                                    ? new Date(breakRecord.end)
-                                        .toISOString()
-                                        .slice(0, 16)
+                                    ? breakRecord.end.toISOString().slice(0, 16)
                                     : ""
                                 }
                                 onChange={(e) =>
                                   handleBreakChange(
                                     index,
                                     "end",
-                                    e.target.value
+                                    new Date(e.target.value)
                                   )
                                 }
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                required
                               />
                             </div>
                             <button

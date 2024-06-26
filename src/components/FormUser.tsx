@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Role } from "../modules/interfaces/user";
-import { createEmployee } from "../modules/constants/fetchData";
+import {
+  createEmployee,
+  getOrganizations,
+} from "../modules/constants/fetchData";
 import { UserForRegistration } from "../modules/interfaces/customUser";
+import { OrganizationWithId } from "../modules/interfaces/organization";
 
 const FormUser: React.FC<{
   setOpen: (open: boolean) => void;
@@ -19,9 +23,21 @@ const FormUser: React.FC<{
     hourlyRate: "", // Add hourlyRate to the form state
   });
 
-  const [organizationIds, ] = useState([
-    "bJHcvlNbZalnmNWPzXei",
-  ]);
+  const [organizations, setOrganizations] = useState<OrganizationWithId[]>([]);
+
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const orgs = await getOrganizations();
+        console.log("Fetched Organizations: ", orgs);
+        setOrganizations(orgs);
+      } catch (error) {
+        console.error("Error fetching organizations: ", error);
+      }
+    };
+
+    fetchOrganizations();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -195,9 +211,9 @@ const FormUser: React.FC<{
                 <option value="" disabled>
                   Select an organization
                 </option>
-                {organizationIds.map((orgId) => (
-                  <option key={orgId} value={orgId}>
-                    {orgId}
+                {organizations.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.name} ({org.id})
                   </option>
                 ))}
               </select>

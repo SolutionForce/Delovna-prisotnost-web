@@ -158,6 +158,7 @@ export const createEmployee = async (newUser: UserForRegistration) => {
 };
 
 export const updateUser = async (updatedUser: User): Promise<User> => {
+  console.log(updatedUser)
   try {
     const idToken = await getIdToken();
     if (!idToken) {
@@ -244,3 +245,35 @@ export const deleteUserAttendance = async (uid: string, index: number): Promise<
 // https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/${uid}
 
 
+
+export const getOrganizations = async (): Promise<any> => {
+  try {
+    const idToken = await getIdToken();
+    if (!idToken) {
+      throw new Error("Unable to retrieve ID token");
+    }
+
+    const response = await fetch("https://us-central1-rvir-1e34e.cloudfunctions.net/api/organizations", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "auth": `${idToken}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch organizations");
+    }
+
+    const organizations = await response.json();
+    
+    organizations.forEach((organization: any) => {
+      console.log("Organization:", organization);
+    });
+
+    return organizations;
+  } catch (error) {
+    console.error("Error fetching organizations:", error);
+    throw error;
+  }
+};
