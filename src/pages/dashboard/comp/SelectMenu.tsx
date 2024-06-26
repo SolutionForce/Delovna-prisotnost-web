@@ -77,7 +77,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
 
   const getRoleColor = (role: Role, isSelected: boolean) => {
     if (role === Role.employee && isSelected) {
-      return "text-white";
+      return "text-black";
     }
     switch (role) {
       case Role.employee:
@@ -85,7 +85,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
       case Role.admin:
         return "text-red-500";
       case Role.guest:
-        return "text-blue-500";
+        return "text-black-200";
       default:
         return "text-gray-500";
     }
@@ -105,7 +105,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
           {({}) => (
             <>
               <div className="relative mt-2">
-                <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-100 sm:text-sm sm:leading-6">
                   <span className="block truncate">
                     {selectedItems.length > 0
                       ? selectedItems.map((user, index, array) => {
@@ -135,7 +135,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                           selected
                             ? "bg-purple-400 text-white"
                             : "text-gray-900",
-                          "relative cursor-default select-none py-2 pl-3 pr-9"
+                          "relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-purple-100 "
                         )
                       }
                       value={person}
@@ -181,25 +181,25 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
       <div className="flex flex-wrap space-x-0 space-y-2 sm:space-x-2 sm:space-y-0 mt-4 sm:mt-0 sm:flex-nowrap">
         <button
           onClick={selectAllEmployees}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-md"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-green-500 hover:bg-green-400 text-white rounded-md"
         >
           All Employees
         </button>
         <button
           onClick={selectAllUsers}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-md"
         >
           All Users
         </button>
         <button
           onClick={deselectAllUsers}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-md"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-red-500 hover:bg-red-400 text-white rounded-md"
         >
           Clear Users
         </button>
         <button
           type="button"
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-md inline-flex items-center justify-center"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-400 text-white rounded-md inline-flex items-center justify-center"
           onClick={() => exportToPDF()}
         >
           <ArrowDownCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />

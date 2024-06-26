@@ -20,7 +20,7 @@ const FormUser: React.FC<{
     password: "",
     organizationId: "",
     role: Role.employee,
-    hourlyRate: "", // Add hourlyRate to the form state
+    hourlyRate: "",
   });
 
   const [organizations, setOrganizations] = useState<OrganizationWithId[]>([]);
@@ -74,7 +74,7 @@ const FormUser: React.FC<{
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl"
+      className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl pt-10 sm:pt-0"
     >
       <div className="flex-1">
         <div className="bg-gray-50 px-4 py-6 sm:px-6">
@@ -119,7 +119,7 @@ const FormUser: React.FC<{
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -141,7 +141,7 @@ const FormUser: React.FC<{
                 value={formData.surname}
                 onChange={handleChange}
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -163,7 +163,7 @@ const FormUser: React.FC<{
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -185,7 +185,7 @@ const FormUser: React.FC<{
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -206,14 +206,18 @@ const FormUser: React.FC<{
                 value={formData.organizationId}
                 onChange={handleChange}
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6 "
               >
                 <option value="" disabled>
                   Select an organization
                 </option>
                 {organizations.map((org) => (
-                  <option key={org.id} value={org.id}>
-                    {org.name} ({org.id})
+                  <option
+                    key={org.id}
+                    value={org.id}
+                    className="hover:bg-purple-300"
+                  >
+                    {org.name}
                   </option>
                 ))}
               </select>
@@ -236,10 +240,11 @@ const FormUser: React.FC<{
                 value={formData.role}
                 onChange={handleChange}
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
               >
                 <option value={Role.employee}>Employee</option>
                 <option value={Role.admin}>Admin</option>
+                <option value={Role.guest}>Guest</option>
               </select>
             </div>
           </div>
@@ -262,7 +267,7 @@ const FormUser: React.FC<{
                 onChange={handleChange}
                 step="0.1"
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -280,7 +285,7 @@ const FormUser: React.FC<{
           </button>
           <button
             type="submit"
-            className="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="inline-flex justify-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600"
           >
             Create User
           </button>

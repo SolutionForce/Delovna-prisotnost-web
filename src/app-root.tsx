@@ -35,6 +35,7 @@ export default function AppRoot() {
   const navigate = useNavigate();
 
   const handleSlideOver = () => {
+    setSidebarOpen(false);
     setIsSlideOverOpen((prev) => !prev);
   };
 
@@ -143,7 +144,7 @@ export default function AppRoot() {
                   <div className="flex h-16 shrink-0 items-center">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                      src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500"
                       alt="Your Company"
                     />
                   </div>
@@ -157,16 +158,16 @@ export default function AppRoot() {
                                 to={item.to}
                                 className={classNames(
                                   item.current
-                                    ? "bg-gray-50 text-indigo-600"
-                                    : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                                    ? "bg-gray-50 text-purple-600"
+                                    : "text-gray-700 hover:text-purple-600 hover:bg-gray-50",
                                   "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                 )}
                               >
                                 <item.icon
                                   className={classNames(
                                     item.current
-                                      ? "text-indigo-600"
-                                      : "text-gray-400 group-hover:text-indigo-600",
+                                      ? "text-purple-600"
+                                      : "text-gray-400 group-hover:text-purple-600",
                                     "h-6 w-6 shrink-0"
                                   )}
                                   aria-hidden="true"
@@ -180,7 +181,7 @@ export default function AppRoot() {
                       <li>
                         <button
                           onClick={() => setShowEmployees((prev) => !prev)}
-                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                         >
                           Employees
                           <span>
@@ -223,7 +224,7 @@ export default function AppRoot() {
                               <li key={user.uid}>
                                 <button
                                   onClick={() => handleUserClick(user)}
-                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                                 >
                                   {user.name} {user.surname}
                                 </button>
@@ -235,7 +236,7 @@ export default function AppRoot() {
                       <li>
                         <button
                           onClick={() => setShowAdmins((prev) => !prev)}
-                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                         >
                           Admins
                           <span>
@@ -278,7 +279,7 @@ export default function AppRoot() {
                               <li key={user.uid}>
                                 <button
                                   onClick={() => handleUserClick(user)}
-                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                                 >
                                   {user.name} {user.surname}
                                 </button>
@@ -290,7 +291,7 @@ export default function AppRoot() {
                       <li>
                         <button
                           onClick={() => setShowGuests((prev) => !prev)}
-                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                          className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                         >
                           Guests
                           <span>
@@ -333,7 +334,7 @@ export default function AppRoot() {
                               <li key={user.uid}>
                                 <button
                                   onClick={() => handleUserClick(user)}
-                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                                 >
                                   {user.name} {user.surname}
                                 </button>
@@ -344,7 +345,7 @@ export default function AppRoot() {
                       </li>
                       <li className="-mx-6">
                         <button
-                          className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-500 hover:bg-purple-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                           onClick={() => handleSlideOver()}
                         >
                           <PlusIcon
@@ -370,13 +371,13 @@ export default function AppRoot() {
                               d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                             />
                           </svg>
-                          <span className="sr-only">Your profile</span>
+
                           <span aria-hidden="true">
                             {getAuth().currentUser?.displayName || "User Name"}
                           </span>
                           <button
                             onClick={handleSignOut}
-                            className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            className="ml-4  px-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                           >
                             Sign out
                           </button>
@@ -397,7 +398,7 @@ export default function AppRoot() {
           <div className="flex h-16 shrink-0 items-center">
             <img
               className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500"
               alt="Your Company"
             />
           </div>
@@ -412,16 +413,16 @@ export default function AppRoot() {
                         to={item.to}
                         className={classNames(
                           item.current
-                            ? "bg-gray-50 text-indigo-600"
-                            : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                            ? "bg-gray-50 text-purple-600"
+                            : "text-gray-700 hover:text-purple-600 hover:bg-gray-50",
                           "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}
                       >
                         <item.icon
                           className={classNames(
                             item.current
-                              ? "text-indigo-600"
-                              : "text-gray-400 group-hover:text-indigo-600",
+                              ? "text-purple-600"
+                              : "text-gray-400 group-hover:text-purple-600",
                             "h-6 w-6 shrink-0"
                           )}
                           aria-hidden="true"
@@ -435,7 +436,7 @@ export default function AppRoot() {
               <li>
                 <button
                   onClick={() => setShowEmployees((prev) => !prev)}
-                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                 >
                   Employees
                   <span>
@@ -478,7 +479,7 @@ export default function AppRoot() {
                       <li key={user.uid}>
                         <button
                           onClick={() => handleUserClick(user)}
-                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                         >
                           {user.name} {user.surname}
                         </button>
@@ -490,7 +491,7 @@ export default function AppRoot() {
               <li>
                 <button
                   onClick={() => setShowAdmins((prev) => !prev)}
-                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                 >
                   Admins
                   <span>
@@ -533,7 +534,7 @@ export default function AppRoot() {
                       <li key={user.uid}>
                         <button
                           onClick={() => handleUserClick(user)}
-                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                         >
                           {user.name} {user.surname}
                         </button>
@@ -545,7 +546,7 @@ export default function AppRoot() {
               <li>
                 <button
                   onClick={() => setShowGuests((prev) => !prev)}
-                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                  className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                 >
                   Guests
                   <span>
@@ -588,7 +589,7 @@ export default function AppRoot() {
                       <li key={user.uid}>
                         <button
                           onClick={() => handleUserClick(user)}
-                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                          className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
                         >
                           {user.name} {user.surname}
                         </button>
@@ -599,7 +600,7 @@ export default function AppRoot() {
               </li>
               <li className="-mx-6">
                 <button
-                  className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-500 hover:bg-purple-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                   onClick={() => handleSlideOver()}
                 >
                   <PlusIcon className="h-5 w-5 mr-2 -ml-1" aria-hidden="true" />
@@ -628,9 +629,9 @@ export default function AppRoot() {
                   </span>
                   <button
                     onClick={handleSignOut}
-                    className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    className=" inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   >
-                    Sign out
+                    Sign outs
                   </button>
                 </div>
               </li>
@@ -683,7 +684,7 @@ export default function AppRoot() {
                   leaveFrom="translate-x-0"
                   leaveTo="translate-x-full"
                 >
-                  <Dialog.Panel className="pointer-events-auto w-screen max-w-2xl">
+                  <Dialog.Panel className="pointer-events-auto w-screen sm:max-w-2xl">
                     <FormUser
                       setOpen={setIsSlideOverOpen}
                       reload={handleReload}
