@@ -168,7 +168,7 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
                       </div>
                       <div>
                         <h4 className="text-lg font-semibold mb-2">Breaks</h4>
-                        {breaks.map((breakRecord, index) => (
+                        {breaks.map((breakRecord, index, array) => (
                           <div key={index} className="space-y-2 mb-4">
                             <div>
                               <label
@@ -245,6 +245,7 @@ const UserFormDialog: React.FC<IUserFormDialogProps> = ({
                                   )
                                 }
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                required={!!timeOut || index!==array.length-1}
                               />
                             </div>
                             <button

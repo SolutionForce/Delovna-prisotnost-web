@@ -108,7 +108,14 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                 <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                   <span className="block truncate">
                     {selectedItems.length > 0
-                      ? selectedItems.map((item) => item.name).join(", ")
+                      ? selectedItems.map((user, index, array) => {
+                        if(index < 3)
+                          return user.name + ' ' + user.surname;
+                        if(index === array.length-1)
+                          return index-2 + " more";
+                        if(index >= 3)
+                          return null;
+                      }).filter((text) => text).join(", ")
                       : "Select..."}
                   </span>
                   <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -141,7 +148,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                               "block truncate"
                             )}
                           >
-                            {person.name}{" "}
+                            {person.name + ' ' + person.surname}{" "}
                             <span
                               className={getRoleColor(person.role, selected)}
                             >

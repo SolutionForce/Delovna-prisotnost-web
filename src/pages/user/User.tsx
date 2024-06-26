@@ -1,11 +1,10 @@
 import { useEffect, useState, Fragment } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   PlusIcon,
   PencilIcon,
-  ArrowDownCircleIcon,
 } from "@heroicons/react/24/outline";
 import UserFormDialog from "./UserFormDialog";
 import {
@@ -14,8 +13,10 @@ import {
   getOrganizations,
 } from "../../modules/constants/fetchData.ts";
 import { User, Attendance, Role } from "../../modules/interfaces/user.ts";
-import { firestore } from "../../firebase.ts";
+import { auth, firestore } from "../../firebase.ts";
 import { OrganizationWithId } from "../../modules/interfaces/organization";
+import { BACKEND_BASE_URL } from "../../modules/constants/api.ts";
+import ExportPdfReport1UserButton from "../../components/pdfReports/exportPdfReport1UserButton/exportPdfReport1UserButton.tsx";
 
 export default function UserF({ reload }: any) {
   const { id } = useParams<{ id: string }>();
@@ -99,11 +100,34 @@ export default function UserF({ reload }: any) {
 
   const handleDeleteUser = async () => {
     try {
-      if (user) {
-        await deleteDoc(doc(firestore, "users", user.uid));
-        reload();
-        navigate("/dashboard");
+      if(!user) {
+        console.error("User for deletion is not specified");
+        return;
       }
+
+      if(!auth.currentUser) {
+        console.error("User must be logged in");
+        return;
+      }
+
+      const idToken = await auth.currentUser.getIdToken(true);
+      const headers = {
+        auth: idToken,
+      };
+
+      const response = await fetch(
+        BACKEND_BASE_URL + "users/" + user.uid,
+        {
+          method: "DELETE",
+          headers: headers,
+        }
+      );
+
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+
+      reload();
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error deleting user: ", error);
     }
@@ -140,9 +164,6 @@ export default function UserF({ reload }: any) {
   if (!user) {
     return <div>Loading...</div>;
   }
-  const exportToPDF = () => {
-    console.log("Exporting to pdf");
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -174,14 +195,11 @@ export default function UserF({ reload }: any) {
           <PencilIcon className="h-5 w-5 mr-2" aria-hidden="true" />
           Edit User
         </button>
-        <button
+        <ExportPdfReport1UserButton
+          user={user}
           type="button"
           className="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600"
-          onClick={() => exportToPDF()}
-        >
-          <ArrowDownCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
-          Export PDF
-        </button>
+          />
       </div>
 
       {user.attendance.length > 0 ? (
