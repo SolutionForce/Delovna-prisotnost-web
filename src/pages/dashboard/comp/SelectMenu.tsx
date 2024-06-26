@@ -91,17 +91,17 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-4 mb-4">
-      <div className="flex-grow">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-4">
+      <div className="flex-grow w-full sm:w-auto">
         <Listbox
           value={selectedItems}
           onChange={(value) => handleSelectionChange(value)}
           multiple={multiSelect}
         >
-          {({ }) => (
+          {({}) => (
             <>
               <div className="relative mt-2">
-                <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                   <span className="block truncate">
                     {selectedItems.length > 0
                       ? selectedItems.map((item) => item.name).join(", ")
@@ -167,22 +167,22 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
           )}
         </Listbox>
       </div>
-      <div className="flex space-x-2">
+      <div className="flex flex-wrap space-x-2 mt-4 sm:mt-0 sm:flex-nowrap">
         <button
           onClick={selectAllEmployees}
-          className="px-4 py-2 bg-green-500 text-white rounded-md"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-md mb-2 sm:mb-0"
         >
           All Employees
         </button>
         <button
           onClick={selectAllUsers}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md mb-2 sm:mb-0"
         >
           All Users
         </button>
         <button
           onClick={deselectAllUsers}
-          className="px-4 py-2 bg-red-500 text-white rounded-md"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-md"
         >
           Clear Users
         </button>
