@@ -20,7 +20,8 @@ const AuthGuard = ({ guarded, fallback }: AuthGuardProps) => {
             `https://us-central1-rvir-1e34e.cloudfunctions.net/api/users/${user.uid}`
           );
           const userData = await response.json();
-          if (userData.role === "admin") {
+
+          if (userData.role === "admin" || userData.role === "doorman") {
             setUser(user);
           } else {
             setShowModal(true);

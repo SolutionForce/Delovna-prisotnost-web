@@ -4,7 +4,8 @@ import { Timestamp } from "firebase/firestore";
 export enum Role {
     admin = "admin",
     employee = "employee",
-    guest = "guest"
+    guest = "guest",
+    doorman="doorman"
 }
 
 export interface Break {

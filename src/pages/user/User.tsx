@@ -2,10 +2,7 @@ import { useEffect, useState, Fragment } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  PlusIcon,
-  PencilIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, PencilIcon } from "@heroicons/react/24/outline";
 import UserFormDialog from "./UserFormDialog";
 import {
   deleteUserAttendance,
@@ -100,12 +97,12 @@ export default function UserF({ reload }: any) {
 
   const handleDeleteUser = async () => {
     try {
-      if(!user) {
+      if (!user) {
         console.error("User for deletion is not specified");
         return;
       }
 
-      if(!auth.currentUser) {
+      if (!auth.currentUser) {
         console.error("User must be logged in");
         return;
       }
@@ -115,13 +112,10 @@ export default function UserF({ reload }: any) {
         auth: idToken,
       };
 
-      const response = await fetch(
-        BACKEND_BASE_URL + "users/" + user.uid,
-        {
-          method: "DELETE",
-          headers: headers,
-        }
-      );
+      const response = await fetch(BACKEND_BASE_URL + "users/" + user.uid, {
+        method: "DELETE",
+        headers: headers,
+      });
 
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -585,6 +579,7 @@ export default function UserF({ reload }: any) {
                               <option value={Role.employee}>Employee</option>
                               <option value={Role.admin}>Admin</option>
                               <option value={Role.guest}>Guest</option>
+                              <option value={Role.doorman}>Doorman</option>
                             </select>
                           </div>
                           <div>

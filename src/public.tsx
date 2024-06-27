@@ -132,7 +132,7 @@ function SignIn() {
               Start a 14 day free trial
             </a>
           </p> */}
-          <div className="m-10">
+          <div className="flex justify-center items-center ">
             <AttendanceQR />
           </div>
         </div>
