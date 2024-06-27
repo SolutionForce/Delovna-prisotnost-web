@@ -16,7 +16,7 @@ import { User, Attendance, Role } from "../../modules/interfaces/user.ts";
 import { auth, firestore } from "../../firebase.ts";
 import { OrganizationWithId } from "../../modules/interfaces/organization";
 import { BACKEND_BASE_URL } from "../../modules/constants/api.ts";
-import ExportPdfReport1UserButton from "../../components/pdfReports/exportPdfReport1UserButton/exportPdfReport1UserButton.tsx";
+import { ExportPDFButton } from "./ExportPDFButton.tsx";
 
 export default function UserF({ reload }: any) {
   const { id } = useParams<{ id: string }>();
@@ -195,11 +195,7 @@ export default function UserF({ reload }: any) {
           <PencilIcon className="h-5 w-5 mr-2" aria-hidden="true" />
           Edit User
         </button>
-        <ExportPdfReport1UserButton
-          user={user}
-          type="button"
-          className="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600"
-          />
+        <ExportPDFButton user={user} />
       </div>
 
       {user.attendance.length > 0 ? (

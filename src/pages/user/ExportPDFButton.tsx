@@ -3,16 +3,100 @@ import { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { User } from "../../modules/interfaces/user";
+import pdfReportTemplate from "../../modules/functions/pdfTemplates/pdfReportTemplate";
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
+import { auth } from "../../firebase";
+
+enum Action {
+  download = "download",
+  sendToUser = "sendToUser"
+}
+
+interface EmailSend {
+  recipientUserId: string;
+  subject: string;
+  message: string;
+}
 
 export const ExportPDFButton = ({ user }: { user: User }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const reportName = "Employee report.pdf";
 
   const openDialog = () => setIsOpen(true);
   const closeDialog = () => setIsOpen(false);
 
-  const exportToPDF = (action: any) => {
-    console.log(user);
-    console.log(`Exporting to pdf: ${action}`);
+  const createPDF = () => {
+    const htmlContent = pdfReportTemplate(user);
+
+    return html2pdf().set({
+      margin: 3,
+      filename: reportName,
+      jsPDF: { format: 'letter', orientation: 'landscape' }
+    }).from(htmlContent);
+  };
+
+  const sendOverEmail = async (recipientUserId: string) => {
+    const emailData: EmailSend = {
+      recipientUserId: recipientUserId,
+      subject: "Report",
+      message: `Hello.
+      
+This email was automatically sent to you. Your PDF report is in the attachment.
+      `
+    };
+
+    try {
+      const pdfBlob = await createPDF().output('blob');
+      const pdfFile = new File([pdfBlob], reportName);
+
+      const formData = new FormData();
+      formData.append('recipientUserId', emailData.recipientUserId);
+      formData.append('subject', emailData.subject);
+      formData.append('message', emailData.message);
+      const files: File[] = [pdfFile];
+      files.forEach(file => formData.append('attachments', file));
+
+    
+      if(!auth.currentUser) {
+        console.warn("User should be logged in");
+        return;
+      }
+
+      const idToken = await auth.currentUser.getIdToken(true);
+      const headers = {
+        auth: idToken,
+      };
+      const response = await fetch('https://us-central1-rvir-1e34e.cloudfunctions.net/api/emails', {
+        method: 'POST',
+        headers: headers,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok: '+response.status+" "+await response.text());
+      }
+
+      const result = await response.json();
+      console.log('Email sent successfully:', result);
+    } catch (error) {
+      alert("PDF report could not be sent.")
+      console.error('Error sending email: ', error);
+    }
+  };
+
+  const exportToPDF = (action: Action) => {
+    if(action === Action.download) {
+      createPDF().save();
+      return;
+    }
+
+    if(action === Action.sendToUser) {
+      sendOverEmail(user.uid)
+      return;
+    }
+
+    console.warn(`Exporting to pdf: no action set`);
   };
 
   return (
@@ -78,7 +162,7 @@ export const ExportPDFButton = ({ user }: { user: User }) => {
                       type="button"
                       className="inline-flex w-full justify-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm"
                       onClick={() => {
-                        exportToPDF("send to employee");
+                        exportToPDF(Action.sendToUser);
                         closeDialog();
                       }}
                     >
@@ -88,7 +172,7 @@ export const ExportPDFButton = ({ user }: { user: User }) => {
                       type="button"
                       className="mt-3  ml-4 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:w-auto sm:text-sm"
                       onClick={() => {
-                        exportToPDF("download");
+                        exportToPDF(Action.download);
                         closeDialog();
                       }}
                     >

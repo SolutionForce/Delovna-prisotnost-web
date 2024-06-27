@@ -56,111 +56,113 @@ const Dashboard: React.FC = () => {
         <Calendar />
       </div>
 
-      <SelectMenu
-        items={users}
-        multiSelect
-        onSelectionChange={setSelectedUsers}
-      />
+      <div id="statistics4pdf">
+        <SelectMenu
+          items={users}
+          multiSelect
+          onSelectionChange={setSelectedUsers}
+        />
 
-      {selectedUsers.length > 0 && (
-        <>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-            <CardDataStats
-              title="Total Time Worked"
-              total={`${totalTimeWorked} hours`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
+        {selectedUsers.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+              <CardDataStats
+                title="Total Time Worked"
+                total={`${totalTimeWorked} hours`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-              </svg>
-            </CardDataStats>
-            <CardDataStats
-              title="Total Break Time"
-              total={`${totalBreakTime} hours`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              </CardDataStats>
+              <CardDataStats
+                title="Total Break Time"
+                total={`${totalBreakTime} hours`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-              </svg>
-            </CardDataStats>
-            <CardDataStats
-              title="Total Money Spent"
-              total={`${totalMoneySpent} €`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              </CardDataStats>
+              <CardDataStats
+                title="Total Money Spent"
+                total={`${totalMoneySpent} €`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-              </svg>
-            </CardDataStats>
-            <CardDataStats
-              title="Average Money Spent Per Person"
-              total={`${averageMoneySpent} €`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              </CardDataStats>
+              <CardDataStats
+                title="Average Money Spent Per Person"
+                total={`${averageMoneySpent} €`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-              </svg>
-            </CardDataStats>
-          </div>
-
-          <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-            <ChartTwo selectedUsers={selectedUsers} />
-          </div>
-
-          <div className="col-span-12 xl:col-span-12">
-            <ChartThree selectedUsers={selectedUsers} />
-          </div>
-
-          <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-            <div className="col-span-12 xl:col-span-12">
-              <TableOne selectedUsers={selectedUsers} />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              </CardDataStats>
             </div>
-            <div className="col-span-12 xl:col-span-12">
-              <ChartOne selectedUsers={selectedUsers} />
+
+            <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
+              <ChartTwo selectedUsers={selectedUsers} />
             </div>
-          </div>
-        </>
-      )}
+
+            <div className="col-span-12 xl:col-span-12">
+              <ChartThree selectedUsers={selectedUsers} />
+            </div>
+
+            <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
+              <div className="col-span-12 xl:col-span-12">
+                <TableOne selectedUsers={selectedUsers} />
+              </div>
+              <div className="col-span-12 xl:col-span-12">
+                <ChartOne selectedUsers={selectedUsers} />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,23 +1,29 @@
 import React from 'react';
 import { ArrowDownCircleIcon } from '@heroicons/react/24/outline';
-import pdfReportTemplate from '../../../modules/functions/pdfTemplates/pdfReportTemplate';
-import { User } from '../../../modules/interfaces/user';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 
-export interface ExportPdfReport1UserButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  user: User;
-}
-
-const ExportPdfReport1UserButton: React.FC<ExportPdfReport1UserButtonProps> = ({ user, ...buttonProps }) => {
-  const exportToPDF = () => {
-    const htmlContent = pdfReportTemplate(user);
+export default function DownloadPdfStatisticsReportButton(buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  /* const exportToPDF1 = () => {
 
     html2pdf().set({
       margin: 3,
       filename: 'Report.pdf',
       jsPDF: { format: 'letter', orientation: 'landscape' }
     }).from(htmlContent).save();
+  }; */
+
+  const exportToPDF = () => {
+    const element = document.getElementById('statistics4pdf');
+    if (element) {
+      html2pdf(element, {
+        margin: 1,
+        filename: 'Statistics report.pdf',
+        jsPDF: { format: 'letter', orientation: 'landscape' }
+      });
+    } else {
+      console.error('Element not found');
+    }
   };
 
   return (
@@ -28,4 +34,3 @@ const ExportPdfReport1UserButton: React.FC<ExportPdfReport1UserButtonProps> = ({
   );
 };
 
-export default ExportPdfReport1UserButton;
