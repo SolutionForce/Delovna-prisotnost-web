@@ -94,9 +94,8 @@ export default function AppRoot() {
   };
 
   return (
-    //! Zamenjaj doorman in admin
     <div>
-      {currentUserRole === Role.doorman ? (
+      {currentUserRole === Role.admin ? (
         <>
           {/* Sidebar for small screens */}
           <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -719,7 +718,7 @@ export default function AppRoot() {
             </Dialog>
           </Transition>
         </>
-      ) : currentUserRole === Role.admin ? (
+      ) : currentUserRole === Role.receptionist ? (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white rounded-lg p-6 flex flex-col items-center w-full h-full overflow-auto">
             <div className="flex-shrink-0">

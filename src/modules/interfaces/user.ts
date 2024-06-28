@@ -5,7 +5,7 @@ export enum Role {
     admin = "admin",
     employee = "employee",
     guest = "guest",
-    doorman="doorman"
+    receptionist = "receptionist"
 }
 
 export interface Break {

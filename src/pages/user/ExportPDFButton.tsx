@@ -86,7 +86,7 @@ This email was automatically sent to you. Your PDF report is in the attachment.
         );
       }
 
-      const result = await response.json();
+      // const result = await response.json();
       // console.log('Email sent successfully:', result);
     } catch (error) {
       alert("PDF report could not be sent.");

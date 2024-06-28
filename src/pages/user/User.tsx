@@ -579,7 +579,7 @@ export default function UserF({ reload }: any) {
                               <option value={Role.employee}>Employee</option>
                               <option value={Role.admin}>Admin</option>
                               <option value={Role.guest}>Guest</option>
-                              <option value={Role.doorman}>Doorman</option>
+                              <option value={Role.receptionist}>Receptionist</option>
                             </select>
                           </div>
                           <div>

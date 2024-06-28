@@ -64,7 +64,7 @@ const EmailForm: React.FC = () => {
         );
       }
 
-      const result = await response.json();
+      // const result = await response.json();
       // console.log('Email sent successfully:', result);
     } catch (error) {
       console.error("Error sending email:", error);

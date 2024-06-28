@@ -26,12 +26,6 @@ function SignIn() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevents the default form submission
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        // console.log("User signed in:", user);
-        // Redirect or perform additional actions upon successful sign-in
-      })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;

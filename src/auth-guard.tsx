@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
+import { Role } from "./modules/interfaces/user";
 
 interface AuthGuardProps {
   guarded: React.ReactNode;
@@ -21,7 +22,7 @@ const AuthGuard = ({ guarded, fallback }: AuthGuardProps) => {
           );
           const userData = await response.json();
 
-          if (userData.role === "admin" || userData.role === "doorman") {
+          if (userData.role === Role.admin || userData.role === Role.receptionist) {
             setUser(user);
           } else {
             setShowModal(true);

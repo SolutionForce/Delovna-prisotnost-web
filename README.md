@@ -1,13 +1,21 @@
 # Delovna-prisotnost-web
-Spletna različica aplikacije Delovna prisotnost, ki je namenjena administratorjem.
+Spletna aplikacija informacijskega sistema Solution force namenjena vodjem/administratorjem in receptorjem.
 
-Vzpostavitev za testiranje:
-- V mapi Delovna-prisotnost-web
-- npm install
-- npm start
+Podrobna dokumentacija celotnega projekta dostopna na https://solutionforce.gitbook.io/solution-force
 
-Vzpostavitev na Firebase strežniku:
-- V mapi Delovna-prisotnost-web
-- npm install
-- npm run deploy
-- Dostopno na "https://rvir-1e34e.web.app/"
+## Navodila vzpostavitve
+
+### Predpogoji
+- Vzpostavljen backend (glej "Delovna-prisotnost-backend" repozitorij)
+- Nameščen Node.js (verzija: v20.14.0)
+
+### Lokalna vzpostavitev
+1. V mapi Delovna-prisotnost-web
+2. npm install
+3. npm start
+
+### Vzpostavitev na Firebase strežniku
+1. V mapi Delovna-prisotnost-web
+2. npm install
+3. npm run deploy
+4. Dostopno na "https://rvir-1e34e.web.app/"
