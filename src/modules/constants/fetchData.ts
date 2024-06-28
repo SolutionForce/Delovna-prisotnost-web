@@ -77,8 +77,8 @@ export const fetchData = async (includeCalc: boolean): Promise<User[]> => {
       throw new Error("Network response was not ok");
     }
     const responseData = await response.json();
-    console.log("RESPONSE OF FUNCTION");
-    console.log(responseData);
+   // console.log("RESPONSE OF FUNCTION");
+    //console.log(responseData);
 
     const users: User[] = responseData.map((item: any) => {
       const attendance: Attendance[] = item.attendance.map((att: any) => ({
@@ -92,7 +92,7 @@ export const fetchData = async (includeCalc: boolean): Promise<User[]> => {
       }));
       if (includeCalc) {
         const calc = calculateMetrics(attendance);
-        console.log(calc);
+        //console.log(calc);
         return {
           uid: item.uid,
           name: item.name,

@@ -5,12 +5,12 @@ import { Fragment } from "react";
 import { User } from "../../modules/interfaces/user";
 import pdfReportTemplate from "../../modules/functions/pdfTemplates/pdfReportTemplate";
 // @ts-ignore
-import html2pdf from 'html2pdf.js';
+import html2pdf from "html2pdf.js";
 import { auth } from "../../firebase";
 
 enum Action {
   download = "download",
-  sendToUser = "sendToUser"
+  sendToUser = "sendToUser",
 }
 
 interface EmailSend {
@@ -29,11 +29,13 @@ export const ExportPDFButton = ({ user }: { user: User }) => {
   const createPDF = () => {
     const htmlContent = pdfReportTemplate(user);
 
-    return html2pdf().set({
-      margin: 3,
-      filename: reportName,
-      jsPDF: { format: 'letter', orientation: 'landscape' }
-    }).from(htmlContent);
+    return html2pdf()
+      .set({
+        margin: 3,
+        filename: reportName,
+        jsPDF: { format: "letter", orientation: "landscape" },
+      })
+      .from(htmlContent);
   };
 
   const sendOverEmail = async (recipientUserId: string) => {
@@ -43,22 +45,21 @@ export const ExportPDFButton = ({ user }: { user: User }) => {
       message: `Hello.
       
 This email was automatically sent to you. Your PDF report is in the attachment.
-      `
+      `,
     };
 
     try {
-      const pdfBlob = await createPDF().output('blob');
+      const pdfBlob = await createPDF().output("blob");
       const pdfFile = new File([pdfBlob], reportName);
 
       const formData = new FormData();
-      formData.append('recipientUserId', emailData.recipientUserId);
-      formData.append('subject', emailData.subject);
-      formData.append('message', emailData.message);
+      formData.append("recipientUserId", emailData.recipientUserId);
+      formData.append("subject", emailData.subject);
+      formData.append("message", emailData.message);
       const files: File[] = [pdfFile];
-      files.forEach(file => formData.append('attachments', file));
+      files.forEach((file) => formData.append("attachments", file));
 
-    
-      if(!auth.currentUser) {
+      if (!auth.currentUser) {
         console.warn("User should be logged in");
         return;
       }
@@ -67,32 +68,40 @@ This email was automatically sent to you. Your PDF report is in the attachment.
       const headers = {
         auth: idToken,
       };
-      const response = await fetch('https://us-central1-rvir-1e34e.cloudfunctions.net/api/emails', {
-        method: 'POST',
-        headers: headers,
-        body: formData,
-      });
+      const response = await fetch(
+        "https://us-central1-rvir-1e34e.cloudfunctions.net/api/emails",
+        {
+          method: "POST",
+          headers: headers,
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Network response was not ok: '+response.status+" "+await response.text());
+        throw new Error(
+          "Network response was not ok: " +
+            response.status +
+            " " +
+            (await response.text())
+        );
       }
 
       const result = await response.json();
-      console.log('Email sent successfully:', result);
+      // console.log('Email sent successfully:', result);
     } catch (error) {
-      alert("PDF report could not be sent.")
-      console.error('Error sending email: ', error);
+      alert("PDF report could not be sent.");
+      console.error("Error sending email: ", error);
     }
   };
 
   const exportToPDF = (action: Action) => {
-    if(action === Action.download) {
+    if (action === Action.download) {
       createPDF().save();
       return;
     }
 
-    if(action === Action.sendToUser) {
-      sendOverEmail(user.uid)
+    if (action === Action.sendToUser) {
+      sendOverEmail(user.uid);
       return;
     }
 

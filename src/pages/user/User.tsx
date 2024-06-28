@@ -51,7 +51,7 @@ export default function UserF({ reload }: any) {
     const fetchOrgIds = async () => {
       try {
         const orgs = await getOrganizations();
-        console.log("Fetched Organizations: ", orgs);
+        // console.log("Fetched Organizations: ", orgs);
         setOrganizations(orgs);
       } catch (error) {
         console.error("Error fetching organizations: ", error);
@@ -74,7 +74,7 @@ export default function UserF({ reload }: any) {
   };
 
   const handleSaveAttendance = async (attendance: Attendance) => {
-    console.log(attendance);
+    // console.log(attendance);
     try {
       if (user) {
         const updatedAttendance =

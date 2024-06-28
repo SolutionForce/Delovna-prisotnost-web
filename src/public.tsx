@@ -29,7 +29,7 @@ function SignIn() {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("User signed in:", user);
+        // console.log("User signed in:", user);
         // Redirect or perform additional actions upon successful sign-in
       })
       .catch((error) => {

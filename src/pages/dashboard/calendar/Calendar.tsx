@@ -22,14 +22,26 @@ const fetchData = async (): Promise<Shift[]> => {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    const responseData = await response.json();
-    console.log(responseData[0].attendance);
 
-    const attendanceData: Shift[] = responseData
-      .map((item: any) => {
-        return JSON.parse(item.attendance);
-      })
-      .flat();
+    const responseData = await response.json();
+    //console.log("responseData:", responseData);
+
+    // Parse the attendance data from each item
+    const attendanceData: Shift[] = responseData.flatMap((item: any) => {
+      try {
+        const parsedAttendance = JSON.parse(item.attendance);
+        return parsedAttendance.map((attendanceItem: any) => ({
+          day: attendanceItem.day,
+          month: attendanceItem.month,
+          year: attendanceItem.year,
+          MorningShift: attendanceItem.MorningShift,
+          AfternoonShift: attendanceItem.AfternoonShift,
+        }));
+      } catch (e) {
+        console.warn("Failed to parse attendance for item:", item, e);
+        return [];
+      }
+    });
 
     return attendanceData;
   } catch (error) {

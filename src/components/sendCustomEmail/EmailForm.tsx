@@ -1,5 +1,5 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { auth } from '../../firebase';
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { auth } from "../../firebase";
 
 interface EmailSend {
   recipientUserId: string;
@@ -9,13 +9,15 @@ interface EmailSend {
 
 const EmailForm: React.FC = () => {
   const [emailData, setEmailData] = useState<EmailSend>({
-    recipientUserId: '',
-    subject: '',
-    message: '',
+    recipientUserId: "",
+    subject: "",
+    message: "",
   });
   const [files, setFiles] = useState<File[]>([]);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setEmailData({ ...emailData, [name]: value });
   };
@@ -29,13 +31,13 @@ const EmailForm: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('recipientUserId', emailData.recipientUserId);
-    formData.append('subject', emailData.subject);
-    formData.append('message', emailData.message);
-    files.forEach(file => formData.append('attachments', file));
+    formData.append("recipientUserId", emailData.recipientUserId);
+    formData.append("subject", emailData.subject);
+    formData.append("message", emailData.message);
+    files.forEach((file) => formData.append("attachments", file));
 
     try {
-      if(!auth.currentUser) {
+      if (!auth.currentUser) {
         console.warn("User should be logged in");
         return;
       }
@@ -44,20 +46,28 @@ const EmailForm: React.FC = () => {
       const headers = {
         auth: idToken,
       };
-      const response = await fetch('https://us-central1-rvir-1e34e.cloudfunctions.net/api/emails', {
-        method: 'POST',
-        headers: headers,
-        body: formData,
-      });
+      const response = await fetch(
+        "https://us-central1-rvir-1e34e.cloudfunctions.net/api/emails",
+        {
+          method: "POST",
+          headers: headers,
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Network response was not ok: '+response.status+" "+await response.text());
+        throw new Error(
+          "Network response was not ok: " +
+            response.status +
+            " " +
+            (await response.text())
+        );
       }
 
       const result = await response.json();
-      console.log('Email sent successfully:', result);
+      // console.log('Email sent successfully:', result);
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
     }
   };
 
@@ -66,19 +76,36 @@ const EmailForm: React.FC = () => {
       <div>
         <label>
           Recipient User ID:
-          <input type="text" name="recipientUserId" value={emailData.recipientUserId} onChange={handleInputChange} required />
+          <input
+            type="text"
+            name="recipientUserId"
+            value={emailData.recipientUserId}
+            onChange={handleInputChange}
+            required
+          />
         </label>
       </div>
       <div>
         <label>
           Subject:
-          <input type="text" name="subject" value={emailData.subject} onChange={handleInputChange} required />
+          <input
+            type="text"
+            name="subject"
+            value={emailData.subject}
+            onChange={handleInputChange}
+            required
+          />
         </label>
       </div>
       <div>
         <label>
           Message:
-          <textarea name="message" value={emailData.message} onChange={handleInputChange} required />
+          <textarea
+            name="message"
+            value={emailData.message}
+            onChange={handleInputChange}
+            required
+          />
         </label>
       </div>
       <div>

@@ -29,7 +29,7 @@ const FormUser: React.FC<{
     const fetchOrganizations = async () => {
       try {
         const orgs = await getOrganizations();
-        console.log("Fetched Organizations: ", orgs);
+        // console.log("Fetched Organizations: ", orgs);
         setOrganizations(orgs);
       } catch (error) {
         console.error("Error fetching organizations: ", error);

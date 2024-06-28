@@ -20,13 +20,13 @@ const Dashboard: React.FC = () => {
     const loadUsers = async () => {
       const data = await fetchData(true);
       setUsers(data);
-      console.log("Fetched users:", data);
+      // console.log("Fetched users:", data);
     };
     loadUsers();
   }, []);
 
   useEffect(() => {
-    console.log("Selected users:", selectedUsers);
+    // console.log("Selected users:", selectedUsers);
   }, [selectedUsers]);
 
   const totalTimeWorked = selectedUsers
