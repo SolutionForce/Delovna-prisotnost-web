@@ -32,6 +32,7 @@ export default function AppRoot() {
   const [showEmployees, setShowEmployees] = useState(true);
   const [showAdmins, setShowAdmins] = useState(false);
   const [showGuests, setShowGuests] = useState(false);
+  const [showReceptionists, setShowReceptionists] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState<Role | null>(null);
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ export default function AppRoot() {
   const filterUsersByRole = (role: Role) => {
     return users.filter((user) => user.role === role);
   };
-
+  console.log(users);
   return (
     <div>
       {currentUserRole === Role.admin ? (
@@ -299,6 +300,65 @@ export default function AppRoot() {
                                     </button>
                                   </li>
                                 ))}
+                              </ul>
+                            )}
+                          </li>
+                          <li>
+                            <button
+                              onClick={() =>
+                                setShowReceptionists((prev) => !prev)
+                              }
+                              className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
+                            >
+                              Receptionists
+                              <span>
+                                {showReceptionists ? (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                    />
+                                  </svg>
+                                ) : (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                                    />
+                                  </svg>
+                                )}
+                              </span>
+                            </button>
+                            {showReceptionists && (
+                              <ul role="list" className="-mx-2 space-y-1">
+                                {filterUsersByRole(Role.receptionist).map(
+                                  (user) => (
+                                    <li key={user.uid}>
+                                      <button
+                                        onClick={() => handleUserClick(user)}
+                                        className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
+                                      >
+                                        {user.name} {user.surname}
+                                      </button>
+                                    </li>
+                                  )
+                                )}
                               </ul>
                             )}
                           </li>
@@ -546,6 +606,61 @@ export default function AppRoot() {
                     {showAdmins && (
                       <ul role="list" className="-mx-2 space-y-1">
                         {filterUsersByRole(Role.admin).map((user) => (
+                          <li key={user.uid}>
+                            <button
+                              onClick={() => handleUserClick(user)}
+                              className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
+                            >
+                              {user.name} {user.surname}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setShowReceptionists((prev) => !prev)}
+                      className="group flex justify-between gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 hover:text-purple-600 hover:bg-gray-50"
+                    >
+                      Receptionists
+                      <span>
+                        {showReceptionists ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                            />
+                          </svg>
+                        )}
+                      </span>
+                    </button>
+                    {showReceptionists && (
+                      <ul role="list" className="-mx-2 space-y-1">
+                        {filterUsersByRole(Role.receptionist).map((user) => (
                           <li key={user.uid}>
                             <button
                               onClick={() => handleUserClick(user)}

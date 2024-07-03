@@ -9,6 +9,7 @@ import TableOne from "./tables/TableOne";
 import { fetchData } from "../../modules/constants/fetchData";
 import Calendar from "./calendar/Calendar";
 import { UserWithCalculations } from "../../modules/interfaces/customUser";
+import SearchUsers from "./Search/SearchUsers";
 
 const Dashboard: React.FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<UserWithCalculations[]>(
@@ -52,6 +53,9 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="mx-4 md:mx-8 lg:mx-16 xl:mx-24">
+      <div className="col-span-12 xl:col-span-12 my-4">
+        <SearchUsers items={users} />
+      </div>
       <div className="col-span-12 xl:col-span-12 my-4">
         <Calendar />
       </div>

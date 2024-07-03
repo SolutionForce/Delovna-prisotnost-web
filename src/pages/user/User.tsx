@@ -156,7 +156,15 @@ export default function UserF({ reload }: any) {
   }
 
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-8 h-8 bg-purple-600 rounded-full animate-bounce"></div>
+          <div className="w-8 h-8 bg-purple-600 rounded-full animate-bounce delay-150"></div>
+          <div className="w-8 h-8 bg-purple-600 rounded-full animate-bounce delay-300"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -579,7 +587,9 @@ export default function UserF({ reload }: any) {
                               <option value={Role.employee}>Employee</option>
                               <option value={Role.admin}>Admin</option>
                               <option value={Role.guest}>Guest</option>
-                              <option value={Role.receptionist}>Receptionist</option>
+                              <option value={Role.receptionist}>
+                                Receptionist
+                              </option>
                             </select>
                           </div>
                           <div>
