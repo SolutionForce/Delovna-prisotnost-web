@@ -1,13 +1,16 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { auth } from "./firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import AttendanceQR from "./components/attendanceSubmission/attendanceQR/attendanceQR";
+import ResetUserPassword from "./components/resetUserPassword/resetUserPassword";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function Public() {
   return (
     <Routes>
       <Route path="/sign-in" element={<SignIn />} />
+      <Route path="/reset-password" element={<ResetUserPassword />} />
       <Route path="*" element={<Navigate to={"/sign-in"} />} />
     </Routes>
   );
@@ -17,6 +20,8 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
@@ -25,6 +30,8 @@ function SignIn() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevents the default form submission
+    setLoading(true);
+    
     signInWithEmailAndPassword(auth, email, password)
       .catch((error) => {
         const errorCode = error.code;
@@ -32,7 +39,7 @@ function SignIn() {
         // Set a generic error message
         setError("Email or password is incorrect");
         console.error("Error signing in:", errorCode, errorMessage);
-      });
+      }).finally(() => {setLoading(false)});
   };
 
   return (
@@ -82,8 +89,9 @@ function SignIn() {
                 </label>
                 <div className="text-sm">
                   <a
-                    href="#"
+                    href=""
                     className="font-semibold text-purple-600 hover:text-purple-500"
+                    onClick={() => {navigate("/reset-password")}}
                   >
                     Forgot password?
                   </a>
@@ -112,6 +120,12 @@ function SignIn() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-purple-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600"
               >
+                {loading && (
+                  <ArrowPathIcon
+                    className="h-5 w-5 mr-2 -ml-1 animate-spin"
+                    aria-hidden="true"
+                  />
+                )}
                 Sign in
               </button>
             </div>
