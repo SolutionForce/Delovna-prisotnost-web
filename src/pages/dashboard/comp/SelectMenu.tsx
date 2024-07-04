@@ -92,8 +92,8 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-4">
-      <div className="flex-grow w-full sm:w-auto">
+    <div className="flex flex-col xl:flex-row xl:items-center xl:space-x-4 mb-4">
+      <div className="flex-grow w-full xl:w-auto">
         <Listbox
           value={selectedItems}
           onChange={(value) => handleSelectionChange(value)}
@@ -105,14 +105,16 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                 <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-100 sm:text-sm sm:leading-6">
                   <span className="block truncate">
                     {selectedItems.length > 0
-                      ? selectedItems.map((user, index, array) => {
-                        if(index < 3)
-                          return user.name + ' ' + user.surname;
-                        if(index === array.length-1)
-                          return index-2 + " more";
-                        if(index >= 3)
-                          return null;
-                      }).filter((text) => text).join(", ")
+                      ? selectedItems
+                          .map((user, index, array) => {
+                            if (index < 3)
+                              return user.name + " " + user.surname;
+                            if (index === array.length - 1)
+                              return index - 2 + " more";
+                            if (index >= 3) return null;
+                          })
+                          .filter((text) => text)
+                          .join(", ")
                       : "Select..."}
                   </span>
                   <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -145,7 +147,7 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
                               "block truncate"
                             )}
                           >
-                            {person.name + ' ' + person.surname}{" "}
+                            {person.name + " " + person.surname}{" "}
                             <span
                               className={getRoleColor(person.role, selected)}
                             >
@@ -175,29 +177,29 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
           )}
         </Listbox>
       </div>
-      <div className="flex flex-wrap space-x-0 space-y-2 sm:space-x-2 sm:space-y-0 mt-4 sm:mt-0 sm:flex-nowrap">
+      <div className="flex flex-col lg:flex-col xl:flex-row flex-wrap space-x-0 space-y-2 xl:space-x-2 xl:space-y-0 mt-4 xl:mt-0 xl:flex-nowrap">
         <button
           onClick={selectAllEmployees}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-green-500 hover:bg-green-400 text-white rounded-md"
+          className="flex-grow xl:flex-grow-0 w-full xl:w-auto px-4 py-2 bg-green-500 hover:bg-green-400 text-white rounded-md"
         >
           All Employees
         </button>
         <button
           onClick={selectAllUsers}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-md"
+          className="flex-grow xl:flex-grow-0 w-full xl:w-auto px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-md"
         >
           All Users
         </button>
         <button
           onClick={deselectAllUsers}
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-red-500 hover:bg-red-400 text-white rounded-md"
+          className="flex-grow xl:flex-grow-0 w-full xl:w-auto px-4 py-2 bg-red-500 hover:bg-red-400 text-white rounded-md"
         >
           Clear Users
         </button>
         <DownloadPdfStatisticsReportsButton
           users={selectedItems}
-          /* type="button"
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-400 text-white rounded-md inline-flex items-center justify-center" */
+          type="button"
+          className="flex-grow xl:flex-grow-0 w-full xl:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-400 text-white rounded-md inline-flex items-center justify-center"
         />
       </div>
     </div>

@@ -8,11 +8,12 @@ import { User } from "../../../modules/interfaces/user";
 import DownloadPdfStatisticsReportButton from "./DownloadPdfStatisticsReportButton";
 import DownloadPdfUsersReportButton from "./DownloadPdfUsersReportButton";
 
-interface DownloadPdfStatisticsReportsButtonProps {
+interface DownloadPdfStatisticsReportsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   users: User[]
 }
 
 export const DownloadPdfStatisticsReportsButton = (props: DownloadPdfStatisticsReportsButtonProps) => {
+  const {users, ...buttonProps} = props;
   const [isOpen, setIsOpen] = useState(false);
 
   const openDialog = () => setIsOpen(true);
@@ -21,9 +22,7 @@ export const DownloadPdfStatisticsReportsButton = (props: DownloadPdfStatisticsR
   return (
     <>
       <button
-        type="button"
-        className="inline-flex items-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600"
-        onClick={openDialog}
+        {...buttonProps} onClick={(e) => { openDialog(); buttonProps.onClick && buttonProps.onClick(e); }}
       >
         <ArrowDownCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
         Export PDF
