@@ -8,7 +8,7 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { UserWithCalculations } from "../../../modules/interfaces/customUser";
 import { Role } from "../../../modules/interfaces/user";
-import DownloadPdfStatisticsReportButton from "../../../components/pdfReports/DownloadPdfStatisticsReportButton/DownloadPdfStatisticsReportButton";
+import { DownloadPdfStatisticsReportsButton } from "../../../components/pdfReports/DownloadPdfStatisticsReportButton/DownloadPdfStatisticsReportsButton";
 
 type SelectMenuProps = {
   items: UserWithCalculations[];
@@ -194,9 +194,10 @@ const SelectMenu: React.FC<SelectMenuProps> = ({
         >
           Clear Users
         </button>
-        <DownloadPdfStatisticsReportButton
-          type="button"
-          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-400 text-white rounded-md inline-flex items-center justify-center"
+        <DownloadPdfStatisticsReportsButton
+          users={selectedItems}
+          /* type="button"
+          className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-400 text-white rounded-md inline-flex items-center justify-center" */
         />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import {Attendance, Role} from "./user"
+import {Attendance, Role, User} from "./user"
 
 
   export interface ICalculations {
@@ -13,13 +13,13 @@ import {Attendance, Role} from "./user"
     hoursWorkedPerMonth: number;
   }
   
-  export interface UserWithCalculations {
+  export interface UserWithCalculations extends User {
     uid: string;
     name: string;
     surname: string;
     email: string;
     createdAt: Timestamp;
-    organizationId?: string;
+    organizationId: string;
     role: Role;
     attendance: Attendance[];
     hourlyRate: number;
@@ -38,6 +38,3 @@ import {Attendance, Role} from "./user"
     hourlyRate?: number;
     password: string;
   }
-
-
-  

@@ -1,5 +1,4 @@
 import React from 'react';
-import { ArrowDownCircleIcon } from '@heroicons/react/24/outline';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 
@@ -28,9 +27,7 @@ export default function DownloadPdfStatisticsReportButton(buttonProps: React.But
 
   return (
     <button {...buttonProps} onClick={(e) => { exportToPDF(); buttonProps.onClick && buttonProps.onClick(e); }}>
-      <ArrowDownCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
-      Export PDF
+      Statistics
     </button>
   );
 };
-
